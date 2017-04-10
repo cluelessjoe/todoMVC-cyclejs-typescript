@@ -15,7 +15,7 @@ export const KEY_DOWN_EVENT = 'keydown';
 export const KEY_UP_EVENT = 'keyup';
 const ESC_KEY = 27;
 
-export const STORAGE_KEY = 'todos-cycle';
+export const STORAGE_KEY = 'todos-cyclejs';
 
 export type Sources = {
     DOM: DOMSource,
