@@ -41,7 +41,7 @@ export const storageIntent: (Sources) => Stream<TodoListState> = (sources: Sourc
     return sources.storage.local
         .getItem(STORAGE_KEY)
         .map(storeEntry => JSON.parse(storeEntry) || {})
-        .map(storedJsonTodos => new TodoListState(List<Todo>(storedJsonTodos.todos), storedJsonTodos.newTodoText))
+        .map(storedJsonTodos => new TodoListState(List<Todo>(storedJsonTodos.todos)))
         .take(1)
         .startWith(new TodoListState(List<Todo>()));
 };
@@ -118,7 +118,6 @@ export function TodoList(sources: Sources): Sinks {
 
     const storage$ = state$
         .map(t => JSON.stringify({
-            newTodoText: t.newTodoText,
             todos: t.todos.toArray()
         }))
         .map(jsonTodos => {
