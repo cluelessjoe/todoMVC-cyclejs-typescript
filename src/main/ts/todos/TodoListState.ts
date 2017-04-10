@@ -14,4 +14,10 @@ export class TodoListState {
     updateNewTodoText(value: string): TodoListState {
         return new TodoListState(this.todos, value)
     }
+
+
+    drop(todo: Todo): TodoListState {
+        const index = this.todos.indexOf(todo);
+        return new TodoListState(this.todos.remove(index), this.newTodoText)
+    }
 }

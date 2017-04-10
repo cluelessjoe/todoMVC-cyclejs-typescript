@@ -3,8 +3,8 @@ import {button, div, DOMSource, h1, header, input, label, li, s, section, ul, VN
 import {NewTodoAdded, NewTodoTextChanged, TodoDeleted} from "./TodoAction";
 import {TodoListState} from "./TodoListState";
 import {Todo} from "./Todo";
-import {List} from "immutable";
-import TodoListItem, {TodoListItemProps, Sinks as ItemSinks} from "./TodoListItem";
+import {List, Seq} from "immutable";
+import TodoListItem, {Sinks as ItemSinks} from "./TodoListItem";
 import isolate from "@cycle/isolate";
 import {Action} from "../Action";
 
@@ -70,22 +70,20 @@ export function TodoList(sources: Sources): Sinks {
     const compos$: Stream<List<ItemSinks>> = state$
         .map(state => state.todos)
         .map(todos => todos
-            .map(todo => isolate(TodoListItem)({
+            .map((todo, index) => isolate(TodoListItem, "todo-" + index)({
                 DOM: sources.DOM,
                 props$: xs.of({
-                        'todo': todo
-                    }
-                )
+                    'todo': todo
+                })
             })).toList());
 
-    const actionsFoCompo$: Stream<Action> = compos$
+    const actionsFromSinks = compos$
         .map(todoItemsSinks => xs.merge(...todoItemsSinks.map(sink => sink.actions$).toArray()))
         .flatten();
 
-    const merge$: Stream<Action> = xs.merge(action$, actionsFoCompo$);
-    merge$.debug("merge");
+    const allActions$ = xs.merge(action$, actionsFromSinks);
 
-    actionProxy$.imitate(action$);
+    actionProxy$.imitate(allActions$);
 
     const todoItemSinks$: Stream<VNode[]> = compos$
         .map(todoItemsSinks => xs.combine(...todoItemsSinks.map(sink => sink.DOM).toArray()))
@@ -147,6 +145,8 @@ function model(state$: Stream<TodoListState>, actions$: Stream<Action>): Stream<
                     return todos.add(action.value as string);
                 } else if (action.type === NewTodoTextChanged) {
                     return todos.updateNewTodoText(action.value as string);
+                } else if (action.type === TodoDeleted) {
+                    return todos.drop(action.value as Todo);
                 } else {
                     throw new Error('huho');
                 }
