@@ -1,16 +1,18 @@
 import xs, {Stream} from "xstream";
 import {button, div, DOMSource, h1, header, input, label, li, s, section, ul, VNode} from "@cycle/dom";
-import {NewTodoAdded, NewTodoTextChanged, TodoDeleted, TodosCompleted, TodosUncompleted} from "./TodoAction";
+import {CompleteAllAskedFor, NewTodoAdded, NewTodoTextChanged, TodoDeleted, TodosCompleted, TodosUncompleted, UncompleteAllAskedFor} from "./TodoAction";
 import {TodoListState} from "./TodoListState";
 import {Todo} from "./Todo";
 import {List, Seq} from "immutable";
-import TodoListItem, {Sinks as ItemSinks} from "./TodoListItem";
+import TodoListItem, {CLICK_EVENT, Sinks as ItemSinks, CHANGE_EVENT} from "./TodoListItem";
 import isolate from "@cycle/isolate";
 import {Action} from "../Action";
 
 export const ENTER_KEY = 13;
 
 export const NEW_TODO_CLASS = ".new-todo";
+export const TOGGLE_ALL_CLASS = '#toggle-all';
+
 export const KEY_DOWN_EVENT = 'keydown';
 export const KEY_UP_EVENT = 'keyup';
 const ESC_KEY = 27;
@@ -41,7 +43,7 @@ export const storageIntent: (Sources) => Stream<TodoListState> = (sources: Sourc
     return sources.storage.local
         .getItem(STORAGE_KEY)
         .map(storeEntry => JSON.parse(storeEntry) || {})
-        .map(storedJsonTodos => new TodoListState(List<Todo>(storedJsonTodos.todos)))
+        .map(storedJsonTodos => new TodoListState(List<Todo>(storedJsonTodos.todos), ""))
         .take(1)
         .startWith(new TodoListState(List<Todo>()));
 };
@@ -54,12 +56,21 @@ export function newTodoTextChangedIntent(sources: Sources): Stream<Action> {
         .map(v => new Action(NewTodoTextChanged, v));
 }
 
+function completeAllIntent(sources: Sources): Stream<Action> {
+    return sources.DOM.select(TOGGLE_ALL_CLASS)
+        .events(CHANGE_EVENT)
+        .map(ev => (ev as any).target.checked)
+        .map(checked => checked ? new Action(CompleteAllAskedFor, null) : new Action(UncompleteAllAskedFor, ''));
+    ;
+
+}
 export function TodoList(sources: Sources): Sinks {
     const newTodoTextChanged$ = newTodoTextChangedIntent(sources);
 
     const newTodoAdded$ = newTodoAddedIntent(sources);
 
-    const action$ = xs.merge(newTodoAdded$, newTodoTextChanged$);
+    const completeAllIntent$ = completeAllIntent(sources);
+    const action$ = xs.merge(newTodoAdded$, newTodoTextChanged$, completeAllIntent$);
 
     const actionProxy$ = xs.create<Action>();
 
@@ -91,8 +102,9 @@ export function TodoList(sources: Sources): Sinks {
 
     let vdom$: Stream<VNode> = xs.combine(state$, todoItemSinks$)
         .map(itemVdomAndTodos => {
-            const state = itemVdomAndTodos[0];
+            const state: TodoListState = itemVdomAndTodos[0];
             const itemsVdom = itemVdomAndTodos[1];
+
             return div([
                     header(".header", [
                         h1('todos'),
@@ -109,8 +121,19 @@ export function TodoList(sources: Sources): Sinks {
                             },
                         })]
                     ),
-                    section(".main",
-                        ul(".todo-list", itemsVdom)
+                    section(".main", [
+                        input(TOGGLE_ALL_CLASS, {
+                            props: {
+                                type: 'checkbox',
+                                checked: state.allCompleted()
+                            },
+                            hook: {
+                                update: (oldVNode, {elm}) => {
+                                    elm.value = state.allCompleted();
+                                },
+                            },
+                        }),
+                        ul(".todo-list", itemsVdom)]
                     )
                 ]
             );
@@ -138,7 +161,7 @@ export function TodoList(sources: Sources): Sinks {
 function model(state$: Stream<TodoListState>, actions$: Stream<Action>): Stream<TodoListState> {
     return state$
         .map(initState =>
-            actions$.fold((todos, action) => {
+            actions$.fold((todos: TodoListState, action) => {
                 if (action.type === NewTodoAdded) {
                     return todos.add(action.value as string);
                 } else if (action.type === NewTodoTextChanged) {
@@ -149,7 +172,12 @@ function model(state$: Stream<TodoListState>, actions$: Stream<Action>): Stream<
                     return todos.complete(action.value as Todo);
                 } else if (action.type === TodosUncompleted) {
                     return todos.uncomplete(action.value as Todo);
-                } else {
+                } else if (action.type === CompleteAllAskedFor) {
+                    return todos.completeAll();
+                } else if (action.type === UncompleteAllAskedFor) {
+                    return todos.uncompleteAll();
+                }
+                else {
                     throw new RangeError(`Action ${action.type} is not supported`);
                 }
             }, initState)
