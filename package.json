@@ -8,39 +8,38 @@
   "contributors": [
     {
       "name": "Olivier Schneider",
-      "url" : "https://github.com/o-schneider"
+      "url": "https://github.com/o-schneider"
     },
     {
       "name": "cluelessjoe",
-      "url" : "https://github.com/cluelessjoe"
+      "url": "https://github.com/cluelessjoe"
     }
   ],
   "main": "index.js",
   "dependencies": {
     "@cycle/collection": "^0.5.1",
-    "@cycle/dom": "^16.0.0",
+    "@cycle/dom": "^17.1.0",
     "@cycle/history": "^6.1.0",
     "@cycle/isolate": "^2.1.0",
-    "@cycle/run": "^3.0.0",
+    "@cycle/run": "^3.1.0",
     "@cycle/storage": "^4.0.0",
     "immutable": "^3.8.1",
     "todomvc-app-css": "^2.1.0",
     "todomvc-common": "^1.0.3",
-    "xstream": "^10.3.0"
+    "xstream": "^10.5.0"
   },
   "devDependencies": {
-    "@cycle/xstream-adapter": "^3.1.0",
     "@types/chai": "^3.4.35",
     "@types/mocha": "^2.2.40",
     "chai": "^3.5.0",
     "html-webpack-plugin": "^2.28.0",
     "mocha": "^3.2.0",
     "path": "^0.12.7",
-    "source-map-loader": "^0.2.0",
-    "ts-loader": "^2.0.2",
+    "source-map-loader": "^0.2.1",
+    "ts-loader": "^2.0.3",
     "ts-node": "^3.0.2",
-    "typescript": "^2.2.1",
-    "webpack": "^2.2.1",
+    "typescript": "^2.2.2",
+    "webpack": "^2.3.3",
     "webpack-dev-server": "^2.4.2"
   },
   "scripts": {
