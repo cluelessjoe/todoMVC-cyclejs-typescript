@@ -151,7 +151,7 @@ function model(state$: Stream<TodoListState>, actions$: Stream<Action>): Stream<
                 } else if (action.type === TodosUncompleted) {
                     return todos.uncomplete(action.value as Todo);
                 } else {
-                    throw new Error('Unknown action');
+                    throw new RangeError(`Action ${action.type} is not supported`);
                 }
             }, initState)
         )
