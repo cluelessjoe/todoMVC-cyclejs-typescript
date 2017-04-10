@@ -1,6 +1,6 @@
 import xs, {Stream} from "xstream";
 import {button, div, DOMSource, h1, header, input, label, li, s, section, ul, VNode} from "@cycle/dom";
-import {NewTodoAdded, NewTodoTextChanged, TodoDeleted} from "./TodoAction";
+import {NewTodoAdded, NewTodoTextChanged, TodoDeleted, TodosCompleted, TodosUncompleted} from "./TodoAction";
 import {TodoListState} from "./TodoListState";
 import {Todo} from "./Todo";
 import {List, Seq} from "immutable";
@@ -110,8 +110,7 @@ export function TodoList(sources: Sources): Sinks {
                         })]
                     ),
                     section(".main",
-                        ul(".todo-list", itemsVdom
-                            .map(todoItem => li(todoItem)))
+                        ul(".todo-list", itemsVdom)
                     )
                 ]
             );
@@ -147,8 +146,12 @@ function model(state$: Stream<TodoListState>, actions$: Stream<Action>): Stream<
                     return todos.updateNewTodoText(action.value as string);
                 } else if (action.type === TodoDeleted) {
                     return todos.drop(action.value as Todo);
+                } else if (action.type === TodosCompleted) {
+                    return todos.complete(action.value as Todo);
+                } else if (action.type === TodosUncompleted) {
+                    return todos.uncomplete(action.value as Todo);
                 } else {
-                    throw new Error('huho');
+                    throw new Error('Unknown action');
                 }
             }, initState)
         )

@@ -1,3 +1,5 @@
-export let NewTodoAdded = "NewTodoAdded";
-export let NewTodoTextChanged = "NewTodoTextChanged";
-export let TodoDeleted = "TodoDeleted";
+export const NewTodoAdded = "NewTodoAdded";
+export const NewTodoTextChanged = "NewTodoTextChanged";
+export const TodoDeleted = "TodoDeleted";
+export const TodosCompleted = "TodoCompleted";
+export const TodosUncompleted = "TodoUncompleted";

@@ -15,9 +15,27 @@ export class TodoListState {
         return new TodoListState(this.todos, value)
     }
 
-
     drop(todo: Todo): TodoListState {
-        const index = this.todos.indexOf(todo);
-        return new TodoListState(this.todos.remove(index), this.newTodoText)
+        return new TodoListState(this.todos.remove(this.getTodoIndex(todo)), this.newTodoText)
+    }
+
+    complete(todo:Todo): TodoListState {
+        return this.toggleTodoState(todo, true);
+    }
+
+    uncomplete(todo:Todo): TodoListState {
+        return this.toggleTodoState(todo, false);
+    }
+
+    private toggleTodoState(todo: Todo, state: boolean) {
+        return new TodoListState(
+            this.todos.set(
+                this.getTodoIndex(todo),
+                new Todo(todo.text, state)),
+            this.newTodoText)
+    }
+
+    private getTodoIndex(todo: Todo) {
+        return this.todos.indexOf(todo);
     }
 }
