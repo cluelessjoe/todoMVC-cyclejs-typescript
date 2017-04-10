@@ -14,5 +14,5 @@ This todoMCV app is currently a work in progress.
 
 - migrating to [Jest](https://github.com/facebook/jest) for the test (currently it's mocha + chai)
 - some FIXME are left
-- some behavior of [todoMCV](https://github.com/tastejs/todomvc/wiki) is missing
+- complete [todoMCV](https://github.com/tastejs/todomvc/wiki) requirements
 
