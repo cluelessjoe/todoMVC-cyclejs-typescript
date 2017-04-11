@@ -1,5 +1,5 @@
 import xs, {Stream} from "xstream";
-import {div, DOMSource, h1, header, input, section, ul, VNode, footer} from "@cycle/dom";
+import {div, DOMSource, h1, header, input, section, ul, VNode, footer, label} from "@cycle/dom";
 import {CompleteAllToggleChanged, CompleteAllToggleTarget, NewTodoAdded, NewTodoTextChanged, TodoDeleted, TodosCompleted, TodosUncompleted} from "./TodoAction";
 import {TodoListState} from "./TodoListState";
 import {Todo} from "./Todo";
@@ -12,7 +12,8 @@ import {CHANGE_EVENT} from "../Events";
 
 export {ENTER_KEY, KEY_DOWN_EVENT, KEY_UP_EVENT};//FIXME : needed ?
 export const NEW_TODO_CLASS = ".new-todo";
-export const TOGGLE_ALL_CLASS = '#toggle-all';
+export const TOGGLE_ALL = 'toggle-all';
+export const TOGGLE_ALL_CLASS = '.' + TOGGLE_ALL;
 export const STORAGE_KEY = 'todos-cyclejs';
 
 export type Sources = {
@@ -107,25 +108,20 @@ export function TodoList(sources: Sources): Sinks {
                                 type: "text",
                                 placeholder: "What needs to be done?",
                                 value: state.newTodoText
-                            },
-                            hook: {
-                                update: (oldVNode, {elm}) => {
-                                    elm.value = state.newTodoText;
-                                },
-                            },
+                            }
                         })]
                     ),
                     section(".main", [
-                        input(TOGGLE_ALL_CLASS, {
-                            props: {
+                        input("#" + TOGGLE_ALL + TOGGLE_ALL_CLASS, {
+                            attrs: {
                                 type: 'checkbox',
                                 checked: state.allCompleted
-                            },
-                            hook: {
-                                update: (oldVNode, {elm}) => {
-                                    elm.value = state.allCompleted
-                                },
-                            },
+                            }
+                        }),
+                        label({
+                            attrs: {
+                                "for": TOGGLE_ALL
+                            }
                         }),
                         ul(".todo-list", itemsVdom)]
                     ),
