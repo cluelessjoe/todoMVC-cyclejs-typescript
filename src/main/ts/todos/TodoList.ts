@@ -99,7 +99,6 @@ export function TodoList(sources: Sources): Sinks {
         .map(itemVdomAndTodos => {
             const state: TodoListState = itemVdomAndTodos[0];
             const itemsVdom = itemVdomAndTodos[1];
-
             return div([
                     header(".header", [
                         h1('todos'),
@@ -116,6 +115,11 @@ export function TodoList(sources: Sources): Sinks {
                             attrs: {
                                 type: 'checkbox',
                                 checked: state.allCompleted
+                            },
+                            hook: {
+                                update: (oldVNode, {elm}) => {
+                                    elm.checked = state.allCompleted;
+                                },
                             }
                         }),
                         label({
