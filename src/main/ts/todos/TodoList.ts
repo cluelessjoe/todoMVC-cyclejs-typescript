@@ -1,6 +1,6 @@
 import xs, {Stream} from "xstream";
-import {div, DOMSource, h1, header, input, section, ul, VNode, footer} from "@cycle/dom";
-import {CompleteAllToggleChanged, CompleteAllToggleTarget, NewTodoAdded, NewTodoTextChanged, TodoDeleted, TodosCompleted, TodosUncompleted} from "./TodoAction";
+import {div, DOMSource, h1, header, input, section, ul, VNode, footer, label} from "@cycle/dom";
+import {CompleteAllToggleChanged, CompleteAllToggleTarget, NewTodoAdded, TodoDeleted, TodosCompleted, TodosUncompleted} from "./TodoAction";
 import {TodoListState} from "./TodoListState";
 import {Todo} from "./Todo";
 import {List} from "immutable";
@@ -8,11 +8,10 @@ import TodoListItem, {Sinks as ItemSinks} from "./TodoListItem";
 import isolate from "@cycle/isolate";
 import {Action} from "../Action";
 import {ENTER_KEY, KEY_DOWN_EVENT, KEY_UP_EVENT} from "../Keys";
-import {CHANGE_EVENT} from "../Events";
 
 export {ENTER_KEY, KEY_DOWN_EVENT, KEY_UP_EVENT};//FIXME : needed ?
 export const NEW_TODO_CLASS = ".new-todo";
-export const TOGGLE_ALL_CLASS = '#toggle-all';
+export const TOGGLE_ALL_CLASS = '#toggle-all.toggle-all';
 export const STORAGE_KEY = 'todos-cyclejs';
 
 export type Sources = {
@@ -38,33 +37,25 @@ export const storageIntent: (Sources) => Stream<TodoListState> = (sources: Sourc
     return sources.storage.local
         .getItem(STORAGE_KEY)
         .map(storeEntry => JSON.parse(storeEntry) || {})
-        .map(storedJsonTodos => new TodoListState(List<Todo>(storedJsonTodos.todos), ""))
+        .map(storedJsonTodos => new TodoListState(List<Todo>(storedJsonTodos.todos)))
         .take(1)
         .startWith(new TodoListState(List<Todo>()));
 };
 
-export function newTodoTextChangedIntent(sources: Sources): Stream<Action> {
-    return sources.DOM.select(NEW_TODO_CLASS)
-        .events(KEY_UP_EVENT)
-        .map(ev => ev as any)
-        .map(ev => String(ev.target.value).trim())
-        .map(v => new Action(NewTodoTextChanged, v));
-}
-
 function completeAllIntent(sources: Sources): Stream<Action> {
-    return sources.DOM.select(TOGGLE_ALL_CLASS)
-        .events(CHANGE_EVENT)
+    return sources.DOM.select("#toggle-all")
+        .events('click')
+        .debug("toggle all")
         .map(ev => (ev as any).target.checked)
         .map(checked => new Action(CompleteAllToggleChanged, (checked ? CompleteAllToggleTarget.COMPLETE_ALL : CompleteAllToggleTarget.UNCOMPLETE_ALL)));
 }
 
 export function TodoList(sources: Sources): Sinks {
-    const newTodoTextChanged$ = newTodoTextChangedIntent(sources);
-
     const newTodoAdded$ = newTodoAddedIntent(sources);
 
     const completeAllIntent$ = completeAllIntent(sources);
-    const action$ = xs.merge(newTodoAdded$, newTodoTextChanged$, completeAllIntent$);
+
+    const action$ = xs.merge(newTodoAdded$, completeAllIntent$);
 
     const actionProxy$ = xs.create<Action>();
 
@@ -99,34 +90,36 @@ export function TodoList(sources: Sources): Sinks {
             const state: TodoListState = itemVdomAndTodos[0];
             const itemsVdom = itemVdomAndTodos[1];
 
-            return div([
+            return div(
+                [
                     header(".header", [
                         h1('todos'),
                         input(NEW_TODO_CLASS, {
-                            attrs: {
-                                type: "text",
-                                placeholder: "What needs to be done?",
-                                value: state.newTodoText
+                            props: {
+                                type: 'text',
+                                placeholder: 'What needs to be done?',
+                                autofocus: true,
+                                name: 'newTodo'
                             },
                             hook: {
                                 update: (oldVNode, {elm}) => {
-                                    elm.value = state.newTodoText;
+                                    elm.value = '';
                                 },
                             },
                         })]
                     ),
                     section(".main", [
-                        input(TOGGLE_ALL_CLASS, {
-                            props: {
+                        input("#toggle-all.toogle-all", {
+                            attrs: {
                                 type: 'checkbox',
                                 checked: state.allCompleted
                             },
-                            hook: {
-                                update: (oldVNode, {elm}) => {
-                                    elm.value = state.allCompleted
-                                },
-                            },
                         }),
+                        label( {
+                            attrs: {
+                                for: 'toggle-all' //FIXME : attrs (not props) required for the 'for' to show up in the code ?
+                            }
+                        },'test'),
                         ul(".todo-list", itemsVdom)]
                     ),
                     footer(".footer")
@@ -159,8 +152,6 @@ function model(state$: Stream<TodoListState>, actions$: Stream<Action>): Stream<
             actions$.fold((todos: TodoListState, action) => {
                 if (action.type === NewTodoAdded) {
                     return todos.add(action.value as string);
-                } else if (action.type === NewTodoTextChanged) {
-                    return todos.updateNewTodoText(action.value as string);
                 } else if (action.type === TodoDeleted) {
                     return todos.drop(action.value as Todo);
                 } else if (action.type === TodosCompleted) {

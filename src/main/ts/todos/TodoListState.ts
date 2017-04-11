@@ -4,21 +4,16 @@ import {Todo} from "./Todo";
 export class TodoListState {
     readonly allCompleted: boolean;
 
-    constructor(readonly todos: List<Todo>,
-                readonly newTodoText?: string) {
+    constructor(readonly todos: List<Todo>) {
         this.allCompleted = this.todos.reduce((acc, todo) => acc && todo.completed, true);
     }
 
     add(value: string): TodoListState {
-        return new TodoListState(this.todos.push(new Todo(value)), "")
-    }
-
-    updateNewTodoText(value: string): TodoListState {
-        return new TodoListState(this.todos, value)
+        return new TodoListState(this.todos.push(new Todo(value)))
     }
 
     drop(todo: Todo): TodoListState {
-        return new TodoListState(this.todos.remove(this.getTodoIndex(todo)), this.newTodoText)
+        return new TodoListState(this.todos.remove(this.getTodoIndex(todo)))
     }
 
     complete(todo: Todo): TodoListState {
@@ -33,8 +28,7 @@ export class TodoListState {
         return new TodoListState(
             this.todos.set(
                 this.getTodoIndex(todo),
-                new Todo(todo.text, state)),
-            this.newTodoText)
+                new Todo(todo.text, state)))
     }
 
     private getTodoIndex(todo: Todo) {
@@ -51,6 +45,6 @@ export class TodoListState {
 
     private toggleAllTodoState(state: boolean) {
         const newTodos = this.todos.map(t => new Todo(t.text, state)).toList();
-        return new TodoListState(newTodos, this.newTodoText);
+        return new TodoListState(newTodos);
     }
 }
