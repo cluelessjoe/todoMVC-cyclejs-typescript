@@ -1,8 +1,7 @@
 import chai = require('chai');
-import {newTodoAddedIntent, NEW_TODO_CLASS, ENTER_KEY, storageIntent, STORAGE_KEY, newTodoTextChangedIntent, KEY_DOWN_EVENT, KEY_UP_EVENT} from '../../main/ts/todos/TodoList';
-import {MockConfig, mockDOMSource, s} from "@cycle/dom";
+import {newTodoAddedIntent, NEW_TODO_CLASS, ENTER_KEY, storageIntent, STORAGE_KEY, KEY_DOWN_EVENT} from '../../main/ts/todos/TodoList';
+import {MockConfig, mockDOMSource} from "@cycle/dom";
 import xs, {Stream} from 'xstream';
-import {NewTodoAdded} from "../../main/ts/todos/TodoAction";
 
 const assert = chai.assert;
 
@@ -76,41 +75,6 @@ describe('Intent tests', () => {
                 });
         });
 
-        it('new todo input saved on keyup', (done) => {
-            const expected = "abc";
-
-            const mockConfig = {} as MockConfig;
-            mockConfig[NEW_TODO_CLASS] = {
-                [KEY_UP_EVENT]: xs.of({
-                    target: {
-                        value: expected
-                    }
-                }, {
-                    target: {
-                        value: expected
-                    }
-                }),
-            };
-
-            const sources = {
-                DOM: mockDOMSource(mockConfig),
-                storage : null
-            };
-
-            const newTodo$ = newTodoTextChangedIntent(sources);
-
-            let called = 0;
-            newTodo$
-                .addListener({
-                    next: event => {
-                        assert.equal(event.value, expected);
-                        called++;
-                        if (called == 2) {
-                            done();
-                        }
-                    }
-                });
-        });
     });
 
     let mockStorage = function (storageContentProvider: (key: string) => Stream<string>) {
@@ -141,7 +105,6 @@ describe('Intent tests', () => {
             storage$.addListener({
                 next: state => {
                     assert.isOk(state.todos.isEmpty());
-                    assert.isOk(state.newTodoText === undefined);
                     done();
                 }
             });
