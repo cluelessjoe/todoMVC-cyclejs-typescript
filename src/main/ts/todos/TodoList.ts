@@ -113,8 +113,13 @@ export function TodoList(sources: Sources): Sinks {
                                 type: 'checkbox',
                                 checked: state.allCompleted
                             },
+                            hook: {
+                                update: (oldVNode, {elm}) => {
+                                    elm.checked = state.allCompleted;
+                                },
+                            }
                         }),
-                        label( {
+                        label({
                             attrs: {
                                 for: 'toggle-all'
                             }
