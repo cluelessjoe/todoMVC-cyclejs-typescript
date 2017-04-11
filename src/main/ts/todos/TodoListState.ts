@@ -44,7 +44,15 @@ export class TodoListState {
     }
 
     uncompleteAll(): TodoListState {
-        const completedTodos: List<Todo> = this.todos.map(t => new Todo(t.text, true));
-        return new TodoListState(completedTodos, this.newTodoText);
+        return this.toggleAllTodoState(false);
+    }
+
+    completeAll(): TodoListState {
+        return this.toggleAllTodoState(true);
+    }
+
+    private toggleAllTodoState(state: boolean) {
+        const newTodos = this.todos.map(t => new Todo(t.text, state)).toList();
+        return new TodoListState(newTodos, this.newTodoText);
     }
 }

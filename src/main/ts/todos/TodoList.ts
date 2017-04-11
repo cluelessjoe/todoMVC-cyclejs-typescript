@@ -1,6 +1,6 @@
 import xs, {Stream} from "xstream";
-import {button, div, DOMSource, h1, header, input, label, li, s, section, ul, VNode} from "@cycle/dom";
-import {CompleteAllAskedFor, NewTodoAdded, NewTodoTextChanged, TodoDeleted, TodosCompleted, TodosUncompleted, UncompleteAllAskedFor} from "./TodoAction";
+import {button, div, DOMSource, h1, header, input, label, li, s, section, ul, VNode, footer} from "@cycle/dom";
+import {CompleteAllToggleChanged, CompleteAllToggleTarget, NewTodoAdded, NewTodoTextChanged, TodoDeleted, TodosCompleted, TodosUncompleted} from "./TodoAction";
 import {TodoListState} from "./TodoListState";
 import {Todo} from "./Todo";
 import {List, Seq} from "immutable";
@@ -60,7 +60,7 @@ function completeAllIntent(sources: Sources): Stream<Action> {
     return sources.DOM.select(TOGGLE_ALL_CLASS)
         .events(CHANGE_EVENT)
         .map(ev => (ev as any).target.checked)
-        .map(checked => checked ? new Action(CompleteAllAskedFor, null) : new Action(UncompleteAllAskedFor, ''));
+        .map(checked => checked ? new Action(CompleteAllToggleChanged, CompleteAllToggleTarget.COMPLETE_ALL) : new Action(CompleteAllToggleChanged, CompleteAllToggleTarget.UNCOMPLETE_ALL));
     ;
 
 }
@@ -134,7 +134,8 @@ export function TodoList(sources: Sources): Sinks {
                             },
                         }),
                         ul(".todo-list", itemsVdom)]
-                    )
+                    ),
+                    footer(".footer")
                 ]
             );
         });
@@ -172,10 +173,12 @@ function model(state$: Stream<TodoListState>, actions$: Stream<Action>): Stream<
                     return todos.complete(action.value as Todo);
                 } else if (action.type === TodosUncompleted) {
                     return todos.uncomplete(action.value as Todo);
-                } else if (action.type === CompleteAllAskedFor) {
-                    return todos.completeAll();
-                } else if (action.type === UncompleteAllAskedFor) {
-                    return todos.uncompleteAll();
+                } else if (action.type === CompleteAllToggleChanged) {
+                    if (CompleteAllToggleTarget.COMPLETE_ALL === action.value) {
+                        return todos.completeAll();
+                    } else {
+                        return todos.uncompleteAll();
+                    }
                 }
                 else {
                     throw new RangeError(`Action ${action.type} is not supported`);
