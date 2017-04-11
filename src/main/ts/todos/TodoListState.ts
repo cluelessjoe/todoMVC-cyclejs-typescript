@@ -2,9 +2,11 @@ import {List} from "immutable";
 import {Todo} from "./Todo";
 
 export class TodoListState {
+    readonly allCompleted: boolean;
 
     constructor(readonly todos: List<Todo>,
                 readonly newTodoText?: string) {
+        this.allCompleted = this.todos.reduce((acc, todo) => acc && todo.completed, true);
     }
 
     add(value: string): TodoListState {
@@ -25,10 +27,6 @@ export class TodoListState {
 
     uncomplete(todo: Todo): TodoListState {
         return this.toggleTodoState(todo, false);
-    }
-
-    allCompleted(): boolean {
-        return this.todos.reduce((acc, todo) => acc && todo.completed, true)
     }
 
     private toggleTodoState(todo: Todo, state: boolean) {

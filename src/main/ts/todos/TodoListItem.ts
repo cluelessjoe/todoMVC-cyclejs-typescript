@@ -3,11 +3,10 @@ import {button, div, DOMSource, label, VNode, input, li} from "@cycle/dom";
 import {Todo} from "./Todo";
 import {Action} from "../Action";
 import {TodoDeleted, TodosCompleted, TodosUncompleted} from "./TodoAction";
+import {CLICK_EVENT, CHANGE_EVENT} from "../Events";
 
 export const DELETED_CLASS = ".destroy";
 export const COMPLETED_TOGGLE_CLASS = ".toggle";
-export const CLICK_EVENT = "click";
-export const CHANGE_EVENT = "change";
 
 
 export type TodoListItemProps = {

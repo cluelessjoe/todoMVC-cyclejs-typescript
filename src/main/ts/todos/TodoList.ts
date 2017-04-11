@@ -1,22 +1,18 @@
 import xs, {Stream} from "xstream";
-import {button, div, DOMSource, h1, header, input, label, li, s, section, ul, VNode, footer} from "@cycle/dom";
+import {div, DOMSource, h1, header, input, section, ul, VNode, footer} from "@cycle/dom";
 import {CompleteAllToggleChanged, CompleteAllToggleTarget, NewTodoAdded, NewTodoTextChanged, TodoDeleted, TodosCompleted, TodosUncompleted} from "./TodoAction";
 import {TodoListState} from "./TodoListState";
 import {Todo} from "./Todo";
-import {List, Seq} from "immutable";
-import TodoListItem, {CLICK_EVENT, Sinks as ItemSinks, CHANGE_EVENT} from "./TodoListItem";
+import {List} from "immutable";
+import TodoListItem, {Sinks as ItemSinks} from "./TodoListItem";
 import isolate from "@cycle/isolate";
 import {Action} from "../Action";
+import {ENTER_KEY, KEY_DOWN_EVENT, KEY_UP_EVENT} from "../Keys";
+import {CHANGE_EVENT} from "../Events";
 
-export const ENTER_KEY = 13;
-
+export {ENTER_KEY, KEY_DOWN_EVENT, KEY_UP_EVENT};//FIXME : needed ?
 export const NEW_TODO_CLASS = ".new-todo";
 export const TOGGLE_ALL_CLASS = '#toggle-all';
-
-export const KEY_DOWN_EVENT = 'keydown';
-export const KEY_UP_EVENT = 'keyup';
-const ESC_KEY = 27;
-
 export const STORAGE_KEY = 'todos-cyclejs';
 
 export type Sources = {
@@ -27,7 +23,6 @@ export type Sinks = {
     DOM: Stream<VNode>,
     storage: Stream<{ action: string, key: string, value?: string }>
 };
-
 
 export function newTodoAddedIntent(sources: Sources): Stream<Action> {
     return sources.DOM.select(NEW_TODO_CLASS)
@@ -60,10 +55,9 @@ function completeAllIntent(sources: Sources): Stream<Action> {
     return sources.DOM.select(TOGGLE_ALL_CLASS)
         .events(CHANGE_EVENT)
         .map(ev => (ev as any).target.checked)
-        .map(checked => checked ? new Action(CompleteAllToggleChanged, CompleteAllToggleTarget.COMPLETE_ALL) : new Action(CompleteAllToggleChanged, CompleteAllToggleTarget.UNCOMPLETE_ALL));
-    ;
-
+        .map(checked => new Action(CompleteAllToggleChanged, (checked ? CompleteAllToggleTarget.COMPLETE_ALL : CompleteAllToggleTarget.UNCOMPLETE_ALL)));
 }
+
 export function TodoList(sources: Sources): Sinks {
     const newTodoTextChanged$ = newTodoTextChangedIntent(sources);
 
@@ -125,11 +119,11 @@ export function TodoList(sources: Sources): Sinks {
                         input(TOGGLE_ALL_CLASS, {
                             props: {
                                 type: 'checkbox',
-                                checked: state.allCompleted()
+                                checked: state.allCompleted
                             },
                             hook: {
                                 update: (oldVNode, {elm}) => {
-                                    elm.value = state.allCompleted();
+                                    elm.value = state.allCompleted
                                 },
                             },
                         }),
