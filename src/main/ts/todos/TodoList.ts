@@ -11,7 +11,8 @@ import {ENTER_KEY, KEY_DOWN_EVENT, KEY_UP_EVENT} from "../Keys";
 
 export {ENTER_KEY, KEY_DOWN_EVENT, KEY_UP_EVENT};//FIXME : needed ?
 export const NEW_TODO_CLASS = ".new-todo";
-export const TOGGLE_ALL_CLASS = '#toggle-all.toggle-all';
+export const TOGGLE_ALL = 'toggle-all';
+export const TOGGLE_ALL_CLASS = '.' + TOGGLE_ALL;
 export const STORAGE_KEY = 'todos-cyclejs';
 
 export type Sources = {
@@ -89,9 +90,7 @@ export function TodoList(sources: Sources): Sinks {
         .map(itemVdomAndTodos => {
             const state: TodoListState = itemVdomAndTodos[0];
             const itemsVdom = itemVdomAndTodos[1];
-
-            return div(
-                [
+            return div([
                     header(".header", [
                         h1('todos'),
                         input(NEW_TODO_CLASS, {
@@ -109,7 +108,7 @@ export function TodoList(sources: Sources): Sinks {
                         })]
                     ),
                     section(".main", [
-                        input("#toggle-all.toogle-all", {
+                        input("#" + TOGGLE_ALL + TOGGLE_ALL_CLASS, {
                             attrs: {
                                 type: 'checkbox',
                                 checked: state.allCompleted
@@ -117,9 +116,9 @@ export function TodoList(sources: Sources): Sinks {
                         }),
                         label( {
                             attrs: {
-                                for: 'toggle-all' //FIXME : attrs (not props) required for the 'for' to show up in the code ?
+                                for: 'toggle-all'
                             }
-                        },'test'),
+                        }),
                         ul(".todo-list", itemsVdom)]
                     ),
                     footer(".footer")
