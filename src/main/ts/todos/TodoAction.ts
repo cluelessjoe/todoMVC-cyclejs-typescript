@@ -1,6 +1,5 @@
 export const NewTodoAdded = "NewTodoAdded";
 export const TodoDeleted = "TodoDeleted";
-export const TodosCompleted = "TodoCompleted";
-export const TodosUncompleted = "TodoUncompleted";
+export const CompleteToggleChanged = "CompleteToggleChanged";
 export const CompleteAllToggleChanged = "CompleteAllToggleChanged";
-export enum CompleteAllToggleTarget {COMPLETE_ALL, UNCOMPLETE_ALL}
+export enum CompleteState {COMPLETED, UNCOMPLETED}

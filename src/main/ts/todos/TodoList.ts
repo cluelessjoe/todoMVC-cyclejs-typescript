@@ -1,6 +1,6 @@
 import xs, {Stream} from "xstream";
 import {div, DOMSource, h1, header, input, section, ul, VNode, footer, label} from "@cycle/dom";
-import {CompleteAllToggleChanged, CompleteAllToggleTarget, NewTodoAdded, TodoDeleted, TodosCompleted, TodosUncompleted} from "./TodoAction";
+import {CompleteAllToggleChanged, CompleteState, CompleteToggleChanged, NewTodoAdded, TodoDeleted} from "./TodoAction";
 import {TodoListState} from "./TodoListState";
 import {Todo} from "./Todo";
 import {List} from "immutable";
@@ -48,7 +48,7 @@ function completeAllIntent(sources: Sources): Stream<Action> {
     return sources.DOM.select("#toggle-all")
         .events(CLICK_EVENT)
         .map(ev => (ev as any).target.checked)
-        .map(checked => new Action(CompleteAllToggleChanged, (checked ? CompleteAllToggleTarget.COMPLETE_ALL : CompleteAllToggleTarget.UNCOMPLETE_ALL)));
+        .map(checked => new Action(CompleteAllToggleChanged, (checked ? CompleteState.COMPLETED : CompleteState.UNCOMPLETED)));
 }
 
 export function TodoList(sources: Sources): Sinks {
@@ -149,26 +149,20 @@ export function TodoList(sources: Sources): Sinks {
     };
 }
 
-function mapToReducers(actions$: Stream<Action>): Stream<Function> {
-    const addTodoReducer$ = filterActionWithType(actions$, NewTodoAdded)
-        .map(action => (state) => state.add(action.value));
+type UpdateCompleteStateFunction = (TodoListState, Todo) => TodoListState;
+type Reducer = (TodoListState) => TodoListState;
+type CompleteToggleChangePayload = {
+    state: CompleteState,
+    todo: Todo  
+}
 
-    const deleteTodoReducer$ = filterActionWithType(actions$, TodoDeleted)
-        .map(action => (state) => state.drop(action.value));
-
-    const completedTodoReducer$ = filterActionWithType(actions$, TodosCompleted)
-        .map(action => (state) => state.complete(action.value));
-
-    const uncompletedTodoReducer$ = filterActionWithType(actions$, TodosUncompleted)
-        .map(action => (state) => state.uncomplete(action.value));
-
-    const completeAllTodoReducer$ = filterActionWithType(actions$, CompleteAllToggleChanged)
-        .filter(action => action.value === CompleteAllToggleTarget.COMPLETE_ALL)
-        .mapTo(state => state.completeAll());
-
-    const uncompleteAllTodoReducer$ = filterActionWithType(actions$, CompleteAllToggleChanged)
-        .filter(action => action.value !== CompleteAllToggleTarget.COMPLETE_ALL)
-        .mapTo(state => state.uncompleteAll());
+function mapToReducers(actions$: Stream<Action>): Stream<Reducer> {
+    const addTodoReducer$ = filterActionWithType(actions$, NewTodoAdded).map(action => (state) => state.add(action.value));
+    const deleteTodoReducer$ = filterActionWithType(actions$, TodoDeleted).map(action => (state) => state.drop(action.value));
+    const completedTodoReducer$ = mapCompleteToggleChanged(actions$, CompleteState.COMPLETED, (state, todo) => state.complete(todo));
+    const uncompletedTodoReducer$ = mapCompleteToggleChanged(actions$, CompleteState.UNCOMPLETED, (state, todo) => state.uncomplete(todo));
+    const completeAllTodoReducer$ = mapCompleteAllToggleChanged(actions$, CompleteState.COMPLETED, state => state.completeAll());
+    const uncompleteAllTodoReducer$ = mapCompleteAllToggleChanged(actions$, CompleteState.UNCOMPLETED, state => state.uncompleteAll());
 
     return xs.merge(
         addTodoReducer$,
@@ -178,6 +172,19 @@ function mapToReducers(actions$: Stream<Action>): Stream<Function> {
         completeAllTodoReducer$,
         uncompleteAllTodoReducer$
     );
+}
+
+function mapCompleteToggleChanged(actions$: Stream<Action>, state: CompleteState, stateUpdateFn: UpdateCompleteStateFunction): Stream<Reducer> {
+    return filterActionWithType(actions$, CompleteToggleChanged)
+        .map(action => action.value as CompleteToggleChangePayload)
+        .filter(payload => payload.state === state)
+        .map(payload => (state) => stateUpdateFn(state, payload.todo));
+}
+
+function mapCompleteAllToggleChanged(actions$: Stream<Action>, state: CompleteState, reducer: Reducer): Stream<Reducer> {
+    return filterActionWithType(actions$, CompleteAllToggleChanged)
+        .filter(action => action.value === state)
+        .mapTo(reducer);
 }
 
 function filterActionWithType(actions$: Stream<Action>, type: string): Stream<Action> {
