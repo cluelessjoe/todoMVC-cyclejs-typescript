@@ -8,6 +8,7 @@ import TodoListItem, {Sinks as ItemSinks} from "./TodoListItem";
 import isolate from "@cycle/isolate";
 import {Action} from "../Action";
 import {ENTER_KEY, KEY_DOWN_EVENT, KEY_UP_EVENT} from "../Keys";
+import {CLICK_EVENT} from "../Events";
 
 export {ENTER_KEY, KEY_DOWN_EVENT, KEY_UP_EVENT};//FIXME : needed ?
 export const NEW_TODO_CLASS = ".new-todo";
@@ -45,8 +46,7 @@ export const storageIntent: (Sources) => Stream<TodoListState> = (sources: Sourc
 
 function completeAllIntent(sources: Sources): Stream<Action> {
     return sources.DOM.select("#toggle-all")
-        .events('click')
-        .debug("toggle all")
+        .events(CLICK_EVENT)
         .map(ev => (ev as any).target.checked)
         .map(checked => new Action(CompleteAllToggleChanged, (checked ? CompleteAllToggleTarget.COMPLETE_ALL : CompleteAllToggleTarget.UNCOMPLETE_ALL)));
 }
@@ -141,8 +141,7 @@ export function TodoList(sources: Sources): Sinks {
                 key: STORAGE_KEY,
                 value: jsonTodos
             };
-        })
-    ;
+        });
 
     return {
         DOM: vdom$,
@@ -150,30 +149,45 @@ export function TodoList(sources: Sources): Sinks {
     };
 }
 
+function mapToReducers(actions$: Stream<Action>): Stream<Function> {
+    const addTodoReducer$ = filterActionWithType(actions$, NewTodoAdded)
+        .map(action => (state) => state.add(action.value));
+
+    const deleteTodoReducer$ = filterActionWithType(actions$, TodoDeleted)
+        .map(action => (state) => state.drop(action.value));
+
+    const completedTodoReducer$ = filterActionWithType(actions$, TodosCompleted)
+        .map(action => (state) => state.complete(action.value));
+
+    const uncompletedTodoReducer$ = filterActionWithType(actions$, TodosUncompleted)
+        .map(action => (state) => state.uncomplete(action.value));
+
+    const completeAllTodoReducer$ = filterActionWithType(actions$, CompleteAllToggleChanged)
+        .filter(action => action.value === CompleteAllToggleTarget.COMPLETE_ALL)
+        .mapTo(state => state.completeAll());
+
+    const uncompleteAllTodoReducer$ = filterActionWithType(actions$, CompleteAllToggleChanged)
+        .filter(action => action.value !== CompleteAllToggleTarget.COMPLETE_ALL)
+        .mapTo(state => state.uncompleteAll());
+
+    return xs.merge(
+        addTodoReducer$,
+        deleteTodoReducer$,
+        completedTodoReducer$,
+        uncompletedTodoReducer$,
+        completeAllTodoReducer$,
+        uncompleteAllTodoReducer$
+    );
+}
+
+function filterActionWithType(actions$: Stream<Action>, type: string): Stream<Action> {
+    return actions$.filter(action => action.type === type);
+}
+
 function model(state$: Stream<TodoListState>, actions$: Stream<Action>): Stream<TodoListState> {
+    const reducers$ = mapToReducers(actions$);
     return state$
-        .map(initState =>
-            actions$.fold((todos: TodoListState, action) => {
-                if (action.type === NewTodoAdded) {
-                    return todos.add(action.value as string);
-                } else if (action.type === TodoDeleted) {
-                    return todos.drop(action.value as Todo);
-                } else if (action.type === TodosCompleted) {
-                    return todos.complete(action.value as Todo);
-                } else if (action.type === TodosUncompleted) {
-                    return todos.uncomplete(action.value as Todo);
-                } else if (action.type === CompleteAllToggleChanged) {
-                    if (CompleteAllToggleTarget.COMPLETE_ALL === action.value) {
-                        return todos.completeAll();
-                    } else {
-                        return todos.uncompleteAll();
-                    }
-                }
-                else {
-                    throw new RangeError(`Action ${action.type} is not supported`);
-                }
-            }, initState)
-        )
+        .map(initState => reducers$.fold((todos, reducer) => reducer(todos), initState))
         .flatten()
         .remember();
 }
