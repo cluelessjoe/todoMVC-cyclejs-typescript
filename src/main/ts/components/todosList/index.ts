@@ -15,7 +15,8 @@ import {Intent} from "../../utils/Action";
 export {ENTER_KEY, KEY_DOWN_EVENT, KEY_UP_EVENT};//FIXME : why is this needed ?
 export const NEW_TODO_CLASS = ".new-todo";
 export const TOGGLE_ALL = 'toggle-all';
-export const TOGGLE_ALL_CLASS = '.' + TOGGLE_ALL;
+export const TOGGLE_ALL_CLASS = `.${TOGGLE_ALL}`;
+export const TOGGLE_ALL_SELECTOR = `#${TOGGLE_ALL}${TOGGLE_ALL_CLASS}`;
 export const STORAGE_KEY = 'todos-cyclejs';
 export const CLEAR_COMPLETED_CLASS = '.clear-completed';
 

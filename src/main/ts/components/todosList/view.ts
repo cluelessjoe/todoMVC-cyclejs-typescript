@@ -3,7 +3,9 @@ import xs, {Stream} from "xstream";
 import {VNode} from "snabbdom/vnode";
 
 import {TodoListState} from "./model";
-import {ACTIVE_PATH, CLEAR_COMPLETED_CLASS, COMPLETED_PATH, NEW_TODO_CLASS, TOGGLE_ALL, TOGGLE_ALL_CLASS} from "./index";
+import {ACTIVE_PATH, CLEAR_COMPLETED_CLASS, COMPLETED_PATH, NEW_TODO_CLASS, TOGGLE_ALL, TOGGLE_ALL_CLASS, TOGGLE_ALL_SELECTOR} from "./index";
+
+
 
 function itemPluralize(count) {
     return count !== 1 ? 's' : ''
@@ -13,6 +15,7 @@ export function view(state$: Stream<TodoListState>, todoItemSinks$: Stream<VNode
         .map(itemVdomAndTodos => {
             const state: TodoListState = itemVdomAndTodos[0];
             const itemsVdom = itemVdomAndTodos[1];
+
 
             return div([
                     header(".header", [
@@ -32,7 +35,7 @@ export function view(state$: Stream<TodoListState>, todoItemSinks$: Stream<VNode
                         })]
                     ),
                     section(".main", [
-                        input("#" + TOGGLE_ALL + TOGGLE_ALL_CLASS, {
+                        input(TOGGLE_ALL_SELECTOR, {
                             attrs: {
                                 type: 'checkbox',
                                 checked: state.allCompleted
@@ -59,7 +62,7 @@ export function view(state$: Stream<TodoListState>, todoItemSinks$: Stream<VNode
                             addFilter(ACTIVE_PATH, "Active", state.isDisplayActive()),
                             addFilter(COMPLETED_PATH, "Completed", state.isDisplayCompleted()),
                         ]),
-                        button(CLEAR_COMPLETED_CLASS, 'Clear completed (' + state.completedCount + ')')
+                        button(CLEAR_COMPLETED_CLASS, `Clear completed (${state.completedCount})`)
                     ])
                 ]
             );
@@ -84,4 +87,4 @@ function addFilter(href: string, label: string, isSelected: boolean): VNode {
             }
         }, label));
     }
-}
+};
