@@ -4,8 +4,6 @@ import {VNode} from "snabbdom/vnode";
 
 import {State} from "./model";
 import {CLEAR_COMPLETED_CLASS, NEW_TODO_CLASS, Route, ROUTE_ACTIVE, ROUTE_ALL, ROUTE_COMPLETED, TOGGLE_ALL_SELECTOR} from "./index";
-import has = Reflect.has;
-
 
 export function view(state$: Stream<State>, todoItemSinks$: Stream<VNode[]>) {
     return xs.combine(state$, todoItemSinks$)
