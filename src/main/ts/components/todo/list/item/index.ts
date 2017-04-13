@@ -2,9 +2,8 @@ import xs, {Stream} from "xstream";
 import {button, div, DOMSource, input, label, li, VNode} from "@cycle/dom";
 
 import {Todo} from "../model";
-import {Intent} from "../../../utils/Action";
-import {CompleteState, CompleteToggleChanged, TodoDeleted} from "../intent";
-import {CHANGE_EVENT, CLICK_EVENT} from "../../../dom/Events";
+import {CompleteState, CompleteToggleChanged, Intent, TodoDeleted} from "../intent";
+import {CHANGE_EVENT, CLICK_EVENT} from "../../../../dom/Events";
 
 export const DELETED_CLASS = ".destroy";
 export const COMPLETED_TOGGLE_CLASS = ".toggle";

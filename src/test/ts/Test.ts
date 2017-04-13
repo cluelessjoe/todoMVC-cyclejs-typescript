@@ -1,7 +1,10 @@
 import chai = require('chai');
-import {newTodoAddedIntent, NEW_TODO_CLASS, ENTER_KEY, storageIntent, STORAGE_KEY, KEY_DOWN_EVENT} from '../../main/ts/todos/index';
 import {MockConfig, mockDOMSource} from "@cycle/dom";
-import xs, {Stream} from 'xstream';
+import xs, {Stream} from "xstream";
+import {newTodoAddedIntent} from "../../main/ts/components/todo/list/intent";
+import {NEW_TODO_CLASS} from "../../main/ts/components/todo/list/index";
+import {ENTER_KEY, KEY_DOWN_EVENT} from "../../main/ts/dom/Keys";
+import {readStateFromStorage, STORAGE_KEY} from "../../main/ts/components/todo/app/index";
 
 const assert = chai.assert;
 
@@ -23,9 +26,8 @@ describe('Intent tests', () => {
 
             const sources = {
                 DOM: mockDOMSource(mockConfig),
-                storage : null,
-                History : null
-
+                History: null,
+                initialState$: null
             };
 
             const newTodo$ = newTodoAddedIntent(sources);
@@ -60,8 +62,8 @@ describe('Intent tests', () => {
 
             const sources = {
                 DOM: mockDOMSource(mockConfig),
-                storage : null,
-                History : null
+                History: null,
+                initialState$: null
             };
 
             const newTodo$ = newTodoAddedIntent(sources);
@@ -97,13 +99,13 @@ describe('Intent tests', () => {
                 return xs.empty();
             });
 
-            storageIntent(sources);
+            readStateFromStorage(sources);
         });
 
         it('start with no todos', done => {
             const sources = mockStorage(key => xs.empty());
 
-            const storage$ = storageIntent(sources);
+            const storage$ = readStateFromStorage(sources);
 
             storage$.addListener({
                 next: state => {

@@ -3,7 +3,7 @@ import xs, {Stream} from "xstream";
 import {VNode} from "snabbdom/vnode";
 
 import {State} from "./model";
-import {ACTIVE_PATH, CLEAR_COMPLETED_CLASS, COMPLETED_PATH, NEW_TODO_CLASS, TOGGLE_ALL, TOGGLE_ALL_CLASS, TOGGLE_ALL_SELECTOR} from "./index";
+import {ACTIVE_PATH, CLEAR_COMPLETED_CLASS, COMPLETED_PATH, NEW_TODO_CLASS, TOGGLE_ALL_SELECTOR} from "./index";
 
 
 

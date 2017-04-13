@@ -2,9 +2,8 @@ import {ACTIVE_PATH, CLEAR_COMPLETED_CLASS, COMPLETED_PATH, NEW_TODO_CLASS, Sour
 import dropRepeats from "xstream/extra/dropRepeats";
 import xs, {Stream} from "xstream";
 
-import {Intent} from "../../utils/Action";
-import {ENTER_KEY, KEY_DOWN_EVENT} from "../../dom/Keys";
-import {CLICK_EVENT} from "../../dom/Events";
+import {ENTER_KEY, KEY_DOWN_EVENT} from "../../../dom/Keys";
+import {CLICK_EVENT} from "../../../dom/Events";
 
 export const NewTodoAdded = "NewTodoAdded";
 export const TodoDeleted = "TodoDeleted";
@@ -13,22 +12,23 @@ export const CompleteAllToggleChanged = "CompleteAllToggleChanged";
 export enum CompleteState {COMPLETED, UNCOMPLETED}
 export const RouteChanged = "RouteChanged";
 export enum RouteState {ALL, ACTIVE, COMPLETED}
-;
+
 export const ClearCompleted = "ClearCompleted";
 
+export class Intent {
+    constructor(readonly type: string, readonly value: Object) {
+    }
+}
+
 export function intent(sources: Sources) {
-    const clearCompleted$ = clearCompleted(sources);
+    return xs.merge(
+        clearCompleted(sources),
+        newTodoAddedIntent(sources),
+        completeAllIntent(sources),
+        routeChangedIntent(sources)
+    );
+}
 
-    const routeChanged$ = routeChangedIntent(sources);
-
-    const newTodoAdded$ = newTodoAddedIntent(sources);
-
-    const completeAllIntent$ = completeAllIntent(sources);
-
-    const action$ = xs.merge(clearCompleted$, newTodoAdded$, completeAllIntent$, routeChanged$);
-
-    return action$;
-};
 
 function completeAllIntent(sources: Sources): Stream<Intent> {
     return sources.DOM.select("#toggle-all")

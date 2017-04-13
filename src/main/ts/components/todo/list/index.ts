@@ -5,14 +5,11 @@ import {DOMSource} from "@cycle/dom";
 import xs, {Stream} from "xstream";
 import {VNode} from "snabbdom/vnode";
 
-import TodoListItem, {Sinks as ItemSinks} from "./todoListItem/index";
-import {ENTER_KEY, KEY_DOWN_EVENT, KEY_UP_EVENT} from "../../dom/Keys";
+import TodoListItem, {Sinks as ItemSinks} from "./item/index";
 import {model, State} from "./model";
 import {view} from "./view";
-import {intent} from "./intent";
-import {Intent} from "../../utils/Action";
+import {intent, Intent} from "./intent";
 
-export {ENTER_KEY, KEY_DOWN_EVENT, KEY_UP_EVENT};//FIXME : why is this needed ?
 export const NEW_TODO_CLASS = ".new-todo";
 export const TOGGLE_ALL = 'toggle-all';
 export const TOGGLE_ALL_CLASS = `.${TOGGLE_ALL}`;

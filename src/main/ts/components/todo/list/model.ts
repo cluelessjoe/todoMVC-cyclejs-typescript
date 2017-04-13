@@ -2,13 +2,12 @@ import {List} from "immutable";
 import xs, {Stream} from "xstream";
 import * as uuid from "uuid";
 
-import {Intent} from "../../utils/Action";
-import {ClearCompleted, CompleteAllToggleChanged, CompleteState, CompleteToggleChanged, NewTodoAdded, RouteChanged, RouteState, TodoDeleted} from "./intent";
+import {ClearCompleted, CompleteAllToggleChanged, CompleteState, CompleteToggleChanged, Intent, NewTodoAdded, RouteChanged, RouteState, TodoDeleted} from "./intent";
 
 export enum Display {ALL, ACTIVE, COMPLETED}
 
 export class Todo {
-    constructor(readonly text: string, readonly completed: boolean = false, readonly id : string = uuid.v4()) {
+    constructor(readonly text: string, readonly completed: boolean = false, readonly id: string = uuid.v4()) {
     }
 }
 
@@ -35,7 +34,7 @@ export class State {
             console.error(message);
             throw new RangeError(message);
         }
-        this.activeCount= this.actives.count();
+        this.activeCount = this.actives.count();
         this.completedCount = this.completed.count();
         this.allCompleted = this.actives.isEmpty();
     }
@@ -184,9 +183,7 @@ function filterActionWithType(actions$: Stream<Intent>, type: string): Stream<In
 export function model(state$: Stream<State>, actions$: Stream<Intent>): Stream<State> {
     const reducers$ = mapToReducers(actions$);
     return state$
-        .map(initState => reducers$
-            .debug("reducers")
-            .fold((todos, reducer) => reducer(todos), initState))
+        .map(initState => reducers$.fold((todos, reducer) => reducer(todos), initState))
         .flatten()
         .remember()
         ;
