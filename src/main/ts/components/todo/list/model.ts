@@ -3,8 +3,7 @@ import xs, {Stream} from "xstream";
 import * as uuid from "uuid";
 
 import {ClearCompleted, CompleteAllToggleChanged, CompleteState, CompleteToggleChanged, Intent, NewTodoAdded, RouteChanged, RouteState, TodoDeleted} from "./intent";
-
-export enum Display {ALL, ACTIVE, COMPLETED}
+import {Route, ROUTE_ACTIVE, ROUTE_ALL, ROUTE_COMPLETED, ROUTE_DEFAULT} from "./index";
 
 export class Todo {
     constructor(readonly text: string, readonly completed: boolean = false, readonly id: string = uuid.v4()) {
@@ -19,15 +18,14 @@ export class State {
     private readonly actives: List<Todo>;
     readonly displayed: List<Todo>;
 
-    constructor(readonly todos: List<Todo>, readonly display: Display = Display.ALL) {
-
+    constructor(readonly todos: List<Todo>, readonly display: Route = ROUTE_DEFAULT) {
         this.actives = this.todos.filter(t => !t.completed).toList();
         this.completed = this.todos.filter(t => t.completed).toList();
-        if (Display.ALL === display) {
+        if (ROUTE_ALL.label === display.label) {
             this.displayed = this.todos;
-        } else if (Display.ACTIVE === display) {
+        } else if (ROUTE_ACTIVE.label === display.label) {
             this.displayed = this.actives;
-        } else if (Display.COMPLETED === display) {
+        } else if (ROUTE_COMPLETED.label === display.label) {
             this.displayed = this.completed;
         } else {
             const message = `display ${display} not expected`;
@@ -89,35 +87,35 @@ export class State {
     }
 
     displayCompleted() {
-        return this.newTodoListStateFromDisplay(Display.COMPLETED);
+        return this.newTodoListStateFromDisplay(ROUTE_COMPLETED);
     }
 
-    private newTodoListStateFromDisplay(filter: Display) {
-        return new State(this.todos, filter);
+    private newTodoListStateFromDisplay(display: Route) {
+        return new State(this.todos, display);
     }
 
     displayActive() {
-        return this.newTodoListStateFromDisplay(Display.ACTIVE);
+        return this.newTodoListStateFromDisplay(ROUTE_ACTIVE);
     }
 
     displayAll() {
-        return this.newTodoListStateFromDisplay(Display.ALL);
+        return this.newTodoListStateFromDisplay(ROUTE_ALL);
     }
 
     isDisplayAll(): boolean {
-        return this.is(Display.ALL);
+        return this.is(ROUTE_ALL);
     }
 
-    private is(display: Display) {
+    private is(display: Route) {
         return this.display === display;
     }
 
     isDisplayActive(): boolean {
-        return this.is(Display.ACTIVE);
+        return this.is(ROUTE_ACTIVE);
     }
 
     isDisplayCompleted(): boolean {
-        return this.is(Display.COMPLETED);
+        return this.is(ROUTE_COMPLETED);
     }
 }
 

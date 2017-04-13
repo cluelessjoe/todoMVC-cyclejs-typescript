@@ -1,4 +1,4 @@
-import {ACTIVE_PATH, CLEAR_COMPLETED_CLASS, COMPLETED_PATH, NEW_TODO_CLASS, Sources} from "./index";
+import {CLEAR_COMPLETED_CLASS, NEW_TODO_CLASS, ROUTE_ACTIVE, ROUTE_COMPLETED, ROUTE_DEFAULT, Sources} from "./index";
 import dropRepeats from "xstream/extra/dropRepeats";
 import xs, {Stream} from "xstream";
 
@@ -29,7 +29,6 @@ export function intent(sources: Sources) {
     );
 }
 
-
 function completeAllIntent(sources: Sources): Stream<Intent> {
     return sources.DOM.select("#toggle-all")
         .events(CLICK_EVENT)
@@ -39,16 +38,14 @@ function completeAllIntent(sources: Sources): Stream<Intent> {
 
 function routeChangedIntent(sources: Sources): Stream<Intent> {
     return sources.History
-        .startWith({pathname: '/'})
+        .startWith({pathname: ROUTE_DEFAULT.hash})
         .map(location => location.hash)
-        .compose(dropRepeats())//FIXME : try without
-        .debug("location")
+        .compose(dropRepeats())
         .map(payload => {
-            console.log("other " + payload);
             let state;
-            if (COMPLETED_PATH === payload) {
+            if (ROUTE_COMPLETED.hash === payload) {
                 state = RouteState.COMPLETED;
-            } else if (ACTIVE_PATH === payload) {
+            } else if (ROUTE_ACTIVE.hash === payload) {
                 state = RouteState.ACTIVE;
             } else {
                 state = RouteState.ALL;

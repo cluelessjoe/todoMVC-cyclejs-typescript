@@ -27,8 +27,16 @@ export type Sinks = {
     state$: Stream<State>
 };
 
-export const COMPLETED_PATH = "#/completed";
-export const ACTIVE_PATH = "#/active";
+
+export class Route {
+    constructor(readonly label: string, readonly hash: string) {
+    }
+}
+
+export const ROUTE_ALL = new Route("All", "#/");
+export const ROUTE_ACTIVE = new Route("Active", "#/active");
+export const ROUTE_COMPLETED = new Route("Completed", "#/completed");
+export const ROUTE_DEFAULT = ROUTE_ALL;
 
 export function TodoList(sources: Sources): Sinks {
     const intentProxy$ = xs.create<Intent>();
@@ -63,7 +71,7 @@ export function TodoList(sources: Sources): Sinks {
 
     return {
         DOM: vdom$,
-        History: xs.empty(),
+        History: state$.map(state => state.display.hash),
         state$: state$
     };
 }

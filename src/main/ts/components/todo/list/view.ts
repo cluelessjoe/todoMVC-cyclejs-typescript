@@ -3,8 +3,7 @@ import xs, {Stream} from "xstream";
 import {VNode} from "snabbdom/vnode";
 
 import {State} from "./model";
-import {ACTIVE_PATH, CLEAR_COMPLETED_CLASS, COMPLETED_PATH, NEW_TODO_CLASS, TOGGLE_ALL_SELECTOR} from "./index";
-
+import {CLEAR_COMPLETED_CLASS, NEW_TODO_CLASS, Route, ROUTE_ACTIVE, ROUTE_ALL, ROUTE_COMPLETED, TOGGLE_ALL_SELECTOR} from "./index";
 
 
 function itemPluralize(count) {
@@ -15,8 +14,6 @@ export function view(state$: Stream<State>, todoItemSinks$: Stream<VNode[]>) {
         .map(itemVdomAndTodos => {
             const state: State = itemVdomAndTodos[0];
             const itemsVdom = itemVdomAndTodos[1];
-
-
             return div([
                     header(".header", [
                         h1('todos'),
@@ -58,33 +55,33 @@ export function view(state$: Stream<State>, todoItemSinks$: Stream<VNode[]>) {
                             strong(state.activeCount),
                             ` item${itemPluralize(state.activeCount)} left`]),
                         ul('.filters', [
-                            addFilter("/", "All", state.isDisplayAll()),
-                            addFilter(ACTIVE_PATH, "Active", state.isDisplayActive()),
-                            addFilter(COMPLETED_PATH, "Completed", state.isDisplayCompleted()),
+                            addFilter(ROUTE_ALL, state.isDisplayAll()),
+                            addFilter(ROUTE_ACTIVE, state.isDisplayActive()),
+                            addFilter(ROUTE_COMPLETED, state.isDisplayCompleted()),
                         ]),
                         button(CLEAR_COMPLETED_CLASS, `Clear completed (${state.completedCount})`)
                     ])
                 ]
             );
         });
-};
+}
 
-function addFilter(href: string, label: string, isSelected: boolean): VNode {
+function addFilter(route: Route, isSelected: boolean): VNode {
     //FIXME : consolidate
     if (isSelected) {
         return li(a({
             props: {
-                href: href
+                href: route.hash
             },
             class: {
                 selected: true
             }
-        }, label));
+        }, route.label));
     } else {
         return li(a({
             props: {
-                href: href
+                href: route.hash
             }
-        }, label));
+        }, route.label));
     }
 };
