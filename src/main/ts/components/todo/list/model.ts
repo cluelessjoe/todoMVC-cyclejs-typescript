@@ -115,7 +115,7 @@ export class State {
     }
 
     private is(display: Route) {
-        return this.display === display;
+        return this.display.label === display.label;
     }
 
     isDisplayActive(): boolean {
