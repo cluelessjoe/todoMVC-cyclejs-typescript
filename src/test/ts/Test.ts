@@ -128,7 +128,7 @@ describe('Intent tests', () => {
          //FIXME check if there is a hook in stringify
          const sources = mockStorage(key => xs.of(JSON.stringify(storedState)));
 
-         const storage$ = storageIntent(sources);
+         const storage$ = readStateFromStorage(sources);
 
          storage$.addListener({
          next: state => {

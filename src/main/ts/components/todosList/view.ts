@@ -2,7 +2,7 @@ import {a, button, div, footer, h1, header, input, label, li, section, span, str
 import xs, {Stream} from "xstream";
 import {VNode} from "snabbdom/vnode";
 
-import {TodoListState} from "./model";
+import {State} from "./model";
 import {ACTIVE_PATH, CLEAR_COMPLETED_CLASS, COMPLETED_PATH, NEW_TODO_CLASS, TOGGLE_ALL, TOGGLE_ALL_CLASS, TOGGLE_ALL_SELECTOR} from "./index";
 
 
@@ -10,10 +10,10 @@ import {ACTIVE_PATH, CLEAR_COMPLETED_CLASS, COMPLETED_PATH, NEW_TODO_CLASS, TOGG
 function itemPluralize(count) {
     return count !== 1 ? 's' : ''
 }
-export function view(state$: Stream<TodoListState>, todoItemSinks$: Stream<VNode[]>) {
+export function view(state$: Stream<State>, todoItemSinks$: Stream<VNode[]>) {
     return xs.combine(state$, todoItemSinks$)
         .map(itemVdomAndTodos => {
-            const state: TodoListState = itemVdomAndTodos[0];
+            const state: State = itemVdomAndTodos[0];
             const itemsVdom = itemVdomAndTodos[1];
 
 

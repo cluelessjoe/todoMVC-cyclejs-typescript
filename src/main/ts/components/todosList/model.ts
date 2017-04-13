@@ -12,7 +12,7 @@ export class Todo {
     }
 }
 
-export class TodoListState {
+export class State {
     readonly allCompleted: boolean;
     readonly activeCount: number;
     readonly completedCount: number;
@@ -41,19 +41,19 @@ export class TodoListState {
     }
 
 
-    add(value: string): TodoListState {
+    add(value: string): State {
         return this.newTodoListState(this.todos.insert(0, new Todo(value)))
     }
 
-    drop(todo: Todo): TodoListState {
+    drop(todo: Todo): State {
         return this.newTodoListState(this.todos.remove(this.getTodoIndex(todo)))
     }
 
-    complete(todo: Todo): TodoListState {
+    complete(todo: Todo): State {
         return this.toggleTodoState(todo, true);
     }
 
-    uncomplete(todo: Todo): TodoListState {
+    uncomplete(todo: Todo): State {
         return this.toggleTodoState(todo, false);
     }
 
@@ -68,11 +68,11 @@ export class TodoListState {
         return this.todos.indexOf(todo);
     }
 
-    uncompleteAll(): TodoListState {
+    uncompleteAll(): State {
         return this.toggleAllTodoState(false);
     }
 
-    completeAll(): TodoListState {
+    completeAll(): State {
         return this.toggleAllTodoState(true);
     }
 
@@ -85,8 +85,8 @@ export class TodoListState {
         return this.newTodoListState(this.todos.filter(t => !t.completed).toList());
     }
 
-    private newTodoListState(todos: List<Todo>): TodoListState {
-        return new TodoListState(todos, this.display);
+    private newTodoListState(todos: List<Todo>): State {
+        return new State(todos, this.display);
     }
 
     displayCompleted() {
@@ -94,7 +94,7 @@ export class TodoListState {
     }
 
     private newTodoListStateFromDisplay(filter: Display) {
-        return new TodoListState(this.todos, filter);
+        return new State(this.todos, filter);
     }
 
     displayActive() {
@@ -122,8 +122,8 @@ export class TodoListState {
     }
 }
 
-type UpdateCompleteStateFunction = (TodoListState, Todo) => TodoListState;
-type Reducer = (TodoListState) => TodoListState;
+type UpdateCompleteStateFunction = (TodoListState, Todo) => State;
+type Reducer = (TodoListState) => State;
 type CompleteToggleChangePayload = {
     state: CompleteState,
     todo: Todo
@@ -181,7 +181,7 @@ function filterActionWithType(actions$: Stream<Intent>, type: string): Stream<In
     return actions$.filter(action => action.type === type);
 }
 
-export function model(state$: Stream<TodoListState>, actions$: Stream<Intent>): Stream<TodoListState> {
+export function model(state$: Stream<State>, actions$: Stream<Intent>): Stream<State> {
     const reducers$ = mapToReducers(actions$);
     return state$
         .map(initState => reducers$
