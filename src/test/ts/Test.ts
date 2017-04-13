@@ -1,5 +1,5 @@
 import chai = require('chai');
-import {newTodoAddedIntent, NEW_TODO_CLASS, ENTER_KEY, storageIntent, STORAGE_KEY, KEY_DOWN_EVENT} from '../../main/ts/todos/TodoList';
+import {newTodoAddedIntent, NEW_TODO_CLASS, ENTER_KEY, storageIntent, STORAGE_KEY, KEY_DOWN_EVENT} from '../../main/ts/todos/index';
 import {MockConfig, mockDOMSource} from "@cycle/dom";
 import xs, {Stream} from 'xstream';
 

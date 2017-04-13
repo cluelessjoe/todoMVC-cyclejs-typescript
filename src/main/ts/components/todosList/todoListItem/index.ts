@@ -1,9 +1,10 @@
 import xs, {Stream} from "xstream";
-import {button, div, DOMSource, label, VNode, input, li} from "@cycle/dom";
-import {Todo} from "./Todo";
-import {Action} from "../Action";
-import {CompleteState, CompleteToggleChanged, TodoDeleted} from "./TodoAction";
-import {CLICK_EVENT, CHANGE_EVENT} from "../Events";
+import {button, div, DOMSource, input, label, li, VNode} from "@cycle/dom";
+
+import {Todo} from "../model";
+import {Intent} from "../../../utils/Action";
+import {CompleteState, CompleteToggleChanged, TodoDeleted} from "../intent";
+import {CHANGE_EVENT, CLICK_EVENT} from "../../../dom/Events";
 
 export const DELETED_CLASS = ".destroy";
 export const COMPLETED_TOGGLE_CLASS = ".toggle";
@@ -18,22 +19,22 @@ export type Sources = {
 };
 export type Sinks = {
     DOM: Stream<VNode>,
-    actions$: Stream<Action>
+    actions$: Stream<Intent>
 };
 
-function intents(sources: Sources): Stream<Action> {
+function intents(sources: Sources): Stream<Intent> {
     const deleteClicked$ = sources.DOM.select(DELETED_CLASS)
         .events(CLICK_EVENT);
 
     const deleteTodo$ = xs.combine(deleteClicked$, sources.props$)
-        .map(evAndProps => new Action(TodoDeleted, evAndProps[1].todo));
+        .map(evAndProps => new Intent(TodoDeleted, evAndProps[1].todo));
 
     const completeToggleClicked$ = sources.DOM.select(COMPLETED_TOGGLE_CLASS)
         .events(CHANGE_EVENT)
         .map(ev => (ev as any).target.checked);
 
     const toggleCompleteTodo$ = xs.combine(completeToggleClicked$, sources.props$)
-        .map(checkedAndProps => new Action(CompleteToggleChanged, {
+        .map(checkedAndProps => new Intent(CompleteToggleChanged, {
             state: checkedAndProps[0] ? CompleteState.COMPLETED : CompleteState.UNCOMPLETED,
             todo: checkedAndProps[1].todo
         }));
