@@ -67,21 +67,12 @@ export function view(state$: Stream<State>, todoItemSinks$: Stream<VNode[]>) {
 }
 
 function addFilter(route: Route, isSelected: boolean): VNode {
-    //FIXME : consolidate
-    if (isSelected) {
-        return li(a({
-            props: {
-                href: route.hash
-            },
-            class: {
-                selected: true
-            }
-        }, route.label));
-    } else {
-        return li(a({
-            props: {
-                href: route.hash
-            }
-        }, route.label));
-    }
+    return li(a({
+        props: {
+            href: route.hash
+        },
+        class: {
+            selected: isSelected
+        }
+    }, route.label));
 };
