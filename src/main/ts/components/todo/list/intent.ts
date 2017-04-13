@@ -40,9 +40,11 @@ function completeAllIntent(sources: Sources): Stream<Intent> {
 function routeChangedIntent(sources: Sources): Stream<Intent> {
     return sources.History
         .startWith({pathname: '/'})
-        .map(location => location.pathname)
+        .map(location => location.hash)
         .compose(dropRepeats())//FIXME : try without
+        .debug("location")
         .map(payload => {
+            console.log("other " + payload);
             let state;
             if (COMPLETED_PATH === payload) {
                 state = RouteState.COMPLETED;

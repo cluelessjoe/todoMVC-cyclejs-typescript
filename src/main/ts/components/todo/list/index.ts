@@ -27,8 +27,8 @@ export type Sinks = {
     state$: Stream<State>
 };
 
-export const COMPLETED_PATH = "/completed";
-export const ACTIVE_PATH = "/active";
+export const COMPLETED_PATH = "#/completed";
+export const ACTIVE_PATH = "#/active";
 
 export function TodoList(sources: Sources): Sinks {
     const intentProxy$ = xs.create<Intent>();

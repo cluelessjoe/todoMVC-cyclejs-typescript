@@ -25,7 +25,7 @@ export function readStateFromStorage(storage): Stream<State> {
     return storage.local
         .getItem(STORAGE_KEY)
         .map(storeEntry => JSON.parse(storeEntry) || {})
-        .map(storedJsonTodos => new State(List<Todo>(storedJsonTodos.todos)))
+        .map(storedJsonTodos => new State(List<Todo>(storedJsonTodos.todos), storedJsonTodos.display))
         .take(1)
         .startWith(new State(List<Todo>()));
 }
@@ -33,13 +33,14 @@ export function readStateFromStorage(storage): Stream<State> {
 function writeStateIntoStorage(state$): Stream<string> {
     return state$
         .map(t => JSON.stringify({
-            todos: t.todos.toArray()
+            todos: t.todos.toArray(),
+            display: t.display
         }))
         .map(jsonTodos => {
             return {
                 action: 'setItem',
                 key: STORAGE_KEY,
-                value: jsonTodos//FIXME : persist display
+                value: jsonTodos
             };
         });
 }

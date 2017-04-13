@@ -19,7 +19,7 @@ export class State {
     private readonly actives: List<Todo>;
     readonly displayed: List<Todo>;
 
-    constructor(readonly todos: List<Todo>, private readonly display: Display = Display.ALL) {
+    constructor(readonly todos: List<Todo>, readonly display: Display = Display.ALL) {
 
         this.actives = this.todos.filter(t => !t.completed).toList();
         this.completed = this.todos.filter(t => t.completed).toList();
