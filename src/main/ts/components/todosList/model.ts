@@ -14,26 +14,32 @@ export class Todo {
 
 export class TodoListState {
     readonly allCompleted: boolean;
-    readonly count: number;
+    readonly activeCount: number;
     readonly completedCount: number;
+    private readonly completed: List<Todo>;
+    private readonly actives: List<Todo>;
     readonly displayed: List<Todo>;
 
     constructor(readonly todos: List<Todo>, private readonly display: Display = Display.ALL) {
+
+        this.actives = this.todos.filter(t => !t.completed).toList();
+        this.completed = this.todos.filter(t => t.completed).toList();
         if (Display.ALL === display) {
             this.displayed = this.todos;
         } else if (Display.ACTIVE === display) {
-            this.displayed = this.todos.filter(t => !t.completed).toList();
+            this.displayed = this.actives;
         } else if (Display.COMPLETED === display) {
-            this.displayed = this.todos.filter(t => t.completed).toList();
+            this.displayed = this.completed;
         } else {
             const message = `display ${display} not expected`;
             console.error(message);
             throw new RangeError(message);
         }
-        this.count = this.displayed.size;
-        this.completedCount = this.displayed.filter(t => t.completed).size;
-        this.allCompleted = this.displayed.reduce((acc, todo) => acc && todo.completed, true);
+        this.activeCount= this.actives.count();
+        this.completedCount = this.completed.count();
+        this.allCompleted = this.actives.isEmpty();
     }
+
 
     add(value: string): TodoListState {
         return this.newTodoListState(this.todos.insert(0, new Todo(value)))

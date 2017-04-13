@@ -83,7 +83,7 @@ export function TodoList(sources: Sources): Sinks {
             return {
                 action: 'setItem',
                 key: STORAGE_KEY,
-                value: jsonTodos
+                value: jsonTodos//FIXME : persist display
             };
         });
 

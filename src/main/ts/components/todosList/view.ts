@@ -5,6 +5,9 @@ import {VNode} from "snabbdom/vnode";
 import {TodoListState} from "./model";
 import {ACTIVE_PATH, CLEAR_COMPLETED_CLASS, COMPLETED_PATH, NEW_TODO_CLASS, TOGGLE_ALL, TOGGLE_ALL_CLASS} from "./index";
 
+function itemPluralize(count) {
+    return count !== 1 ? 's' : ''
+}
 export function view(state$: Stream<TodoListState>, todoItemSinks$: Stream<VNode[]>) {
     return xs.combine(state$, todoItemSinks$)
         .map(itemVdomAndTodos => {
@@ -49,8 +52,8 @@ export function view(state$: Stream<TodoListState>, todoItemSinks$: Stream<VNode
                     ),
                     footer(".footer", [
                         span(".todo-count", [
-                            strong(state.count),
-                            " item left"]),//FIXME : add s
+                            strong(state.activeCount),
+                            ` item${itemPluralize(state.activeCount)} left`]),
                         ul('.filters', [
                             addFilter("/", "All", state.isDisplayAll()),
                             addFilter(ACTIVE_PATH, "Active", state.isDisplayActive()),
