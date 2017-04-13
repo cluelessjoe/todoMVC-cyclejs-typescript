@@ -7,6 +7,7 @@ import {CLICK_EVENT} from "../../../dom/Events";
 
 export const NewTodoAdded = "NewTodoAdded";
 export const TodoDeleted = "TodoDeleted";
+export const TodoUpdated = "TodoUpdated";
 export const CompleteToggleChanged = "CompleteToggleChanged";
 export const CompleteAllToggleChanged = "CompleteAllToggleChanged";
 export enum CompleteState {COMPLETED, UNCOMPLETED}

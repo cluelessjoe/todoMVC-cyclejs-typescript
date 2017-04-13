@@ -2,7 +2,7 @@ import {List} from "immutable";
 import xs, {Stream} from "xstream";
 import * as uuid from "uuid";
 
-import {ClearCompleted, CompleteAllToggleChanged, CompleteState, CompleteToggleChanged, Intent, NewTodoAdded, RouteChanged, RouteState, TodoDeleted} from "./intent";
+import {ClearCompleted, CompleteAllToggleChanged, CompleteState, CompleteToggleChanged, Intent, NewTodoAdded, RouteChanged, RouteState, TodoDeleted, TodoUpdated} from "./intent";
 import {Route, ROUTE_ACTIVE, ROUTE_ALL, ROUTE_COMPLETED, ROUTE_DEFAULT} from "./index";
 
 export class Todo {
@@ -44,6 +44,14 @@ export class State {
 
     drop(todo: Todo): State {
         return this.newTodoListState(this.todos.remove(this.getTodoIndex(todo)))
+    }
+
+    update(text: string, todo: Todo): State {
+        return this.newTodoListState(
+            this.todos.set(
+                this.getTodoIndex(todo),
+                new Todo(text, todo.completed)
+            ));
     }
 
     complete(todo: Todo): State {
@@ -126,11 +134,19 @@ type CompleteToggleChangePayload = {
     todo: Todo
 }
 
+type UpdateTodoPayload = {
+    text: string,
+    todo: Todo
+}
+
 function mapToReducers(actions$: Stream<Intent>): Stream<Reducer> {
     const addTodoReducer$ = filterActionWithType(actions$, NewTodoAdded)
         .map(action => (state) => state.add(action.value));
     const deleteTodoReducer$ = filterActionWithType(actions$, TodoDeleted)
         .map(action => (state) => state.drop(action.value));
+    const updateTodoReducer$ = filterActionWithType(actions$, TodoUpdated)
+        .map(action => action.value as UpdateTodoPayload)
+        .map(value => (state) => state.update(value.text, value.todo));
     const completedTodoReducer$ = mapCompleteToggleChanged(actions$, CompleteState.COMPLETED, (state, todo) => state.complete(todo));
     const uncompletedTodoReducer$ = mapCompleteToggleChanged(actions$, CompleteState.UNCOMPLETED, (state, todo) => state.uncomplete(todo));
     const completeAllTodoReducer$ = mapCompleteAllToggleChanged(actions$, CompleteState.COMPLETED, state => state.completeAll());
@@ -144,6 +160,7 @@ function mapToReducers(actions$: Stream<Intent>): Stream<Reducer> {
     return xs.merge(
         addTodoReducer$,
         deleteTodoReducer$,
+        updateTodoReducer$,
         completedTodoReducer$,
         uncompletedTodoReducer$,
         completeAllTodoReducer$,
