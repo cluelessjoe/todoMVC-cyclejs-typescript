@@ -54,7 +54,7 @@ export function TodoList(sources: Sources): Sinks {
     const compos$: Stream<List<ItemSinks>> = state$
         .map(state => state.displayed)
         .map(todos => todos
-            .map((todo, index) => isolate(TodoListItem, "todo-" + index)({
+            .map((todo, index) => isolate(TodoListItem, todo.id)({
                 DOM: sources.DOM,
                 props$: xs.of({
                     'todo': todo

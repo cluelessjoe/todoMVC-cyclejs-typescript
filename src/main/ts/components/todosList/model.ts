@@ -1,12 +1,14 @@
 import {List} from "immutable";
 import xs, {Stream} from "xstream";
+import * as uuid from "uuid";
 
 import {Intent} from "../../utils/Action";
 import {ClearCompleted, CompleteAllToggleChanged, CompleteState, CompleteToggleChanged, NewTodoAdded, RouteChanged, RouteState, TodoDeleted} from "./intent";
+
 export enum Display {ALL, ACTIVE, COMPLETED}
 
 export class Todo {
-    constructor(readonly text: string, readonly completed: boolean = false) {
+    constructor(readonly text: string, readonly completed: boolean = false, readonly id : string = uuid.v4()) {
     }
 }
 
@@ -17,7 +19,6 @@ export class TodoListState {
     readonly displayed: List<Todo>;
 
     constructor(readonly todos: List<Todo>, private readonly display: Display = Display.ALL) {
-
         if (Display.ALL === display) {
             this.displayed = this.todos;
         } else if (Display.ACTIVE === display) {
