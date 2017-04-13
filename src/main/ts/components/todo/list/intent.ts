@@ -42,6 +42,7 @@ function routeChangedIntent(sources: Sources): Stream<Intent> {
         .startWith({pathname: ROUTE_DEFAULT.hash})
         .map(location => location.hash)
         .compose(dropRepeats())
+        .debug("route")
         .map(payload => {
             let state;
             if (ROUTE_COMPLETED.hash === payload) {
