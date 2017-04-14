@@ -9,6 +9,7 @@ import TodoListItem, {Sinks as ItemSinks} from "./item/index";
 import {model, State} from "./model";
 import {view} from "./view";
 import {intent, Intent} from "./intent";
+import dropRepeats from "xstream/extra/dropRepeats";
 
 export const NEW_TODO_CLASS = ".new-todo";
 export const TOGGLE_ALL = 'toggle-all';
@@ -71,7 +72,7 @@ export function TodoList(sources: Sources): Sinks {
 
     return {
         DOM: vdom$,
-        History: state$.map(state => state.display.hash),
+        History: sources.initialState$.map(s => s.display.hash);
         state$: state$
     };
 }
