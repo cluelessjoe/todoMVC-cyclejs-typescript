@@ -47,6 +47,22 @@
   "scripts": {
     "dev": "webpack-dev-server --open",
     "build": "webpack",
-    "test": "mocha  --compilers ts:ts-node/register,tsx:ts-node/register"
+    "test": "jest"
+  },
+  "jest": {
+    "roots": [
+      "dist/",
+      "src/test/ts/"
+    ],
+    "transform": {
+      ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "json"
+    ]
   }
 }
