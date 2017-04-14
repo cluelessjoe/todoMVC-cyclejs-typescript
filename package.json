@@ -1,6 +1,6 @@
 {
   "name": "todomvc-cycle-typescript",
-  "version": "0.1",
+  "version": "1.0.0",
   "description": "A TodoMVC in cyclejs and Typescript",
   "license": "MIT",
   "homepage": "https://github.com/cluelessjoe/todoMVC-cyclejs-typescript",
