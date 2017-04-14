@@ -1,9 +1,9 @@
-import {a, button, div, footer, h1, header, input, label, li, section, span, strong, ul} from "@cycle/dom";
-import xs, {Stream} from "xstream";
-import {VNode} from "snabbdom/vnode";
+import {a, button, div, footer, h1, header, input, label, li, section, span, strong, ul} from '@cycle/dom';
+import xs, {Stream} from 'xstream';
+import {VNode} from 'snabbdom/vnode';
 
-import {State} from "./model";
-import {CLEAR_COMPLETED_CLASS, NEW_TODO_CLASS, Route, ROUTE_ACTIVE, ROUTE_ALL, ROUTE_COMPLETED, TOGGLE_ALL_SELECTOR} from "./index";
+import {State} from './model';
+import {CLEAR_COMPLETED_CLASS, NEW_TODO_CLASS, Route, ROUTE_ACTIVE, ROUTE_ALL, ROUTE_COMPLETED, TOGGLE_ALL_SELECTOR} from './index';
 
 export function view(state$: Stream<State>, todoItemSinks$: Stream<VNode[]>) {
     return xs.combine(state$, todoItemSinks$)
@@ -24,7 +24,7 @@ function renderContent(state: State, itemsVdom: VNode[]) {
 }
 
 function renderMain(state: State, itemsVdom: VNode[]) {
-    return section(".main", [
+    return section('.main', [
         input(TOGGLE_ALL_SELECTOR, {
             attrs: {
                 type: 'checkbox',
@@ -41,12 +41,12 @@ function renderMain(state: State, itemsVdom: VNode[]) {
                 for: 'toggle-all'
             }
         }),
-        ul(".todo-list", itemsVdom)]
+        ul('.todo-list', itemsVdom)]
     );
 }
 
 function renderHeader() {
-    return header(".header", [
+    return header('.header', [
         h1('todos'),
         input(NEW_TODO_CLASS, {
             props: {
@@ -65,8 +65,8 @@ function renderHeader() {
 }
 
 function renderFooter(state: State) {
-    return footer(".footer", [
-        span(".todo-count", [
+    return footer('.footer', [
+        span('.todo-count', [
             strong(state.activeCount),
             ` item${itemPluralize(state.activeCount)} left`]),
         ul('.filters', [

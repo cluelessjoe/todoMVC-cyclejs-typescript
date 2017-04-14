@@ -1,17 +1,17 @@
-import isolate from "@cycle/isolate";
-import {List} from "immutable";
-import {GenericInput, HistoryInput} from "@cycle/history";
-import {DOMSource} from "@cycle/dom";
-import xs, {Stream} from "xstream";
-import {VNode} from "snabbdom/vnode";
+import isolate from '@cycle/isolate';
+import {List} from 'immutable';
+import {GenericInput, HistoryInput} from '@cycle/history';
+import {DOMSource} from '@cycle/dom';
+import xs, {Stream} from 'xstream';
+import {VNode} from 'snabbdom/vnode';
 
-import TodoListItem, {Sinks as ItemSinks} from "./item/index";
-import {model, State} from "./model";
-import {view} from "./view";
-import {intent, Intent} from "./intent";
-import dropRepeats from "xstream/extra/dropRepeats";
+import TodoListItem, {Sinks as ItemSinks} from './item/index';
+import {model, State} from './model';
+import {view} from './view';
+import {intent, Intent} from './intent';
+import dropRepeats from 'xstream/extra/dropRepeats';
 
-export const NEW_TODO_CLASS = ".new-todo";
+export const NEW_TODO_CLASS = '.new-todo';
 export const TOGGLE_ALL = 'toggle-all';
 export const TOGGLE_ALL_CLASS = `.${TOGGLE_ALL}`;
 export const TOGGLE_ALL_SELECTOR = `#${TOGGLE_ALL}${TOGGLE_ALL_CLASS}`;
@@ -34,9 +34,9 @@ export class Route {
     }
 }
 
-export const ROUTE_ALL = new Route("All", "#/");
-export const ROUTE_ACTIVE = new Route("Active", "#/active");
-export const ROUTE_COMPLETED = new Route("Completed", "#/completed");
+export const ROUTE_ALL = new Route('All', '#/');
+export const ROUTE_ACTIVE = new Route('Active', '#/active');
+export const ROUTE_COMPLETED = new Route('Completed', '#/completed');
 export const ROUTE_DEFAULT = ROUTE_ALL;
 
 export function TodoList(sources: Sources): Sinks {
