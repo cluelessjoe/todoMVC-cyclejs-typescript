@@ -72,7 +72,7 @@ export function TodoList(sources: Sources): Sinks {
 
     return {
         DOM: vdom$,
-        History: sources.initialState$.map(s => s.display.hash);
+        History: sources.initialState$.map(s => s.display.hash),
         state$: state$
     };
 }
