@@ -33,8 +33,8 @@ export function view(state$: Stream<boolean>, props$: Stream<TodoListItemProps>)
                         value: text
                     },
                     hook: {
-                        insert: (node) => {
-                            if (editing) node.elm.focus();
+                        insert: ({elm}) => {
+                            if (editing) elm.focus();
                         }
                     }
 

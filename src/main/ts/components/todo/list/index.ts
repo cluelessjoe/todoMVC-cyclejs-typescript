@@ -8,7 +8,7 @@ import {VNode} from "snabbdom/vnode";
 import TodoListItem, {Sinks as ItemSinks} from "./item/index";
 import {model, State} from "./model";
 import {view} from "./view";
-import {intent, Intent} from "./intent";
+import {intent, Intent, TodoCancelled} from "./intent";
 import dropRepeats from "xstream/extra/dropRepeats";
 
 export const NEW_TODO_CLASS = ".new-todo";
@@ -68,7 +68,11 @@ export function TodoList(sources: Sources): Sinks {
         .map(todoItemsSinks => xs.combine(...todoItemsSinks.map(sink => sink.DOM).toArray()))
         .flatten();
 
-    let vdom$: Stream<VNode> = view(state$, todoItemSinks$);
+    const inputCancelled$ = intentProxy$.filter(intent => intent.type === TodoCancelled)
+        .mapTo(true)
+        .startWith(false);
+
+    let vdom$: Stream<VNode> = view(state$, inputCancelled$, todoItemSinks$);
 
     return {
         DOM: vdom$,

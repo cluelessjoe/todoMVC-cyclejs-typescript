@@ -1,7 +1,7 @@
 import chai = require('chai');
 import {MockConfig, mockDOMSource} from "@cycle/dom";
 import xs, {Stream} from "xstream";
-import {newTodoAddedIntent} from "../../main/ts/components/todo/list/intent";
+import {newTodoInputIntents} from "../../main/ts/components/todo/list/intent";
 import {NEW_TODO_CLASS} from "../../main/ts/components/todo/list/index";
 import {ENTER_KEY, KEY_DOWN_EVENT} from "../../main/ts/dom/Keys";
 import {readStateFromStorage, STORAGE_KEY} from "../../main/ts/components/todo/app/index";
@@ -30,7 +30,7 @@ describe('Intent tests', () => {
                 initialState$: null
             };
 
-            const newTodo$ = newTodoAddedIntent(sources);
+            const newTodo$ = newTodoInputIntents(sources);
 
             newTodo$
                 .addListener({
@@ -66,7 +66,7 @@ describe('Intent tests', () => {
                 initialState$: null
             };
 
-            const newTodo$ = newTodoAddedIntent(sources);
+            const newTodo$ = newTodoInputIntents(sources);
 
             let called = 0;
             newTodo$

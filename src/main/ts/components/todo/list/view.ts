@@ -5,19 +5,20 @@ import {VNode} from "snabbdom/vnode";
 import {State} from "./model";
 import {CLEAR_COMPLETED_CLASS, NEW_TODO_CLASS, Route, ROUTE_ACTIVE, ROUTE_ALL, ROUTE_COMPLETED, TOGGLE_ALL_SELECTOR} from "./index";
 
-export function view(state$: Stream<State>, todoItemSinks$: Stream<VNode[]>) {
-    return xs.combine(state$, todoItemSinks$)
+export function view(state$: Stream<State>, cancelled$: Stream<boolean>, todoItemSinks$: Stream<VNode[]>) {
+    return xs.combine(state$, cancelled$, todoItemSinks$)
         .map(itemVdomAndTodos => {
             const state: State = itemVdomAndTodos[0];
-            const itemsVdom = itemVdomAndTodos[1];
+            const cancelled = itemVdomAndTodos[1];
+            const itemsVdom = itemVdomAndTodos[2];
 
-            return div(renderContent(state, itemsVdom));
+            return div(renderContent(state, cancelled, itemsVdom));
         });
 }
 
-function renderContent(state: State, itemsVdom: VNode[]) {
+function renderContent(state: State, cancelled: boolean, itemsVdom: VNode[]) {
     const hasTodos = !state.todos.isEmpty();
-    const header = renderHeader();
+    const header = renderHeader(cancelled);
     return hasTodos ?
         [header, renderMain(state, itemsVdom), renderFooter(state)] :
         [header]
@@ -45,7 +46,7 @@ function renderMain(state: State, itemsVdom: VNode[]) {
     );
 }
 
-function renderHeader() {
+function renderHeader(cancelled: boolean) {
     return header(".header", [
         h1('todos'),
         input(NEW_TODO_CLASS, {
@@ -57,7 +58,11 @@ function renderHeader() {
             },
             hook: {
                 update: (oldVNode, {elm}) => {
+                    console.log("update", cancelled, elm);
                     elm.value = '';
+                    if(cancelled) {
+                        elm.blur();
+                    }
                 },
             },
         })]
