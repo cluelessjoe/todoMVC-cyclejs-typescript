@@ -23,8 +23,9 @@ Here are some links you may find helpful:
 Articles and guides from the community:
 
 * [Learn Cycle.js in 1h 37min](https://egghead.io/courses/cycle-js-fundamentals)
+* [Awesome Cycle.js](https://github.com/cyclejs-community/awesome-cyclejs)
 
-Get help from other TypeScript users:
+Get help from other Cycle.js users:
 
 * [Cycle.js gitter](https://gitter.im/cyclejs/cyclejs)
 * [Github Issues](https://github.com/cyclejs/cyclejs/issues), check the label ["discussion (is always a closed issue)"](https://github.com/cyclejs/cyclejs/issues?q=label%3A%22discussion+%28is+always+a+closed+issue%29%22+is%3Aclosed)
@@ -79,8 +80,8 @@ and
 ```
 npm run dev
 ```
-But you should really give yarn a closer look. ;) 
+But you should really give [yarn](https://yarnpkg.com/) a closer look. ;)
 
 ## Credit
 
-Created by [Joseph Pachod](https://github.com/cluelessjoe) and [Olivier Schneider](https://github.com/o-schneider) 
+Created by [Olivier Schneider](https://github.com/o-schneider) and [Joseph Pachod](https://github.com/cluelessjoe)
