@@ -1,9 +1,9 @@
-import {List} from "immutable";
-import xs, {Stream} from "xstream";
-import * as uuid from "uuid";
+import {List} from 'immutable';
+import xs, {Stream} from 'xstream';
+import * as uuid from 'uuid';
 
-import {ClearCompleted, CompleteAllToggleChanged, CompleteState, CompleteToggleChanged, Intent, NewTodoAdded, RouteChanged, RouteState, TodoDeleted, TodoUpdated} from "./intent";
-import {Route, ROUTE_ACTIVE, ROUTE_ALL, ROUTE_COMPLETED, ROUTE_DEFAULT} from "./index";
+import {ClearCompleted, CompleteAllToggleChanged, CompleteState, CompleteToggleChanged, Intent, NewTodoAdded, RouteChanged, RouteState, TodoDeleted, TodoUpdated} from './intent';
+import {Route, ROUTE_ACTIVE, ROUTE_ALL, ROUTE_COMPLETED, ROUTE_DEFAULT} from './index';
 
 export class Todo {
     constructor(readonly text: string, readonly completed: boolean = false, readonly id: string = uuid.v4()) {

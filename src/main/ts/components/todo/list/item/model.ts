@@ -1,7 +1,7 @@
-import xs, {Stream} from "xstream";
+import xs, {Stream} from 'xstream';
 
-import {Intent} from "../intent";
-import {EditEnded, EditStarted} from "./intent";
+import {Intent} from '../intent';
+import {EditEnded, EditStarted} from './intent';
 
 export function model(intents$: Stream<Intent>): Stream<boolean> {
     return xs.merge(

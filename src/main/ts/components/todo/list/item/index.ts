@@ -1,11 +1,11 @@
-import {Stream} from "xstream";
-import {DOMSource, VNode} from "@cycle/dom";
+import {Stream} from 'xstream';
+import {DOMSource, VNode} from '@cycle/dom';
 
-import {Todo} from "../model";
-import {Intent} from "../intent";
-import {intents} from "./intent";
-import {model} from "./model";
-import {view} from "./view";
+import {Todo} from '../model';
+import {Intent} from '../intent';
+import {intents} from './intent';
+import {model} from './model';
+import {view} from './view';
 
 
 export type TodoListItemProps = {
