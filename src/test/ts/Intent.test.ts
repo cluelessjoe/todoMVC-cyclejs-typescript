@@ -1,14 +1,13 @@
-import chai = require('chai');
-import {MockConfig, mockDOMSource} from "@cycle/dom";
 import xs, {Stream} from "xstream";
-import {newTodoAddedIntent} from "../../main/ts/components/todo/list/intent";
+import {readStateFromStorage, STORAGE_KEY} from "../../main/ts/components/todo/app/index";
 import {NEW_TODO_CLASS} from "../../main/ts/components/todo/list/index";
 import {ENTER_KEY, KEY_DOWN_EVENT} from "../../main/ts/dom/Keys";
-import {readStateFromStorage, STORAGE_KEY} from "../../main/ts/components/todo/app/index";
+import {mockDOMSource, MockConfig} from "@cycle/dom";
+import {newTodoAddedIntent} from "../../main/ts/components/todo/list/intent";
 
-const assert = chai.assert;
 
 describe('Intent tests', () => {
+
     describe('New todo intents', () => {
         it('create the todo on pressing enter key', (done) => {
             const expected = "abc";
@@ -35,8 +34,7 @@ describe('Intent tests', () => {
             newTodo$
                 .addListener({
                     next: event => {
-                        assert.equal(event.value, expected);
-                        assert.isOk(event); //FIXME
+                        expect(event.value).toBe(expected);
                         done();
                     }
                 });
@@ -84,22 +82,21 @@ describe('Intent tests', () => {
 
     let mockStorage = function (storageContentProvider: (key: string) => Stream<string>) {
         return {
-            storage: {
-                local: {
-                    getItem: storageContentProvider
-                }
+            local: {
+                getItem: storageContentProvider
             }
+
         };
+
     };
     describe('Local storage', () => {
         it('use key ' + STORAGE_KEY, done => {
-            const sources = mockStorage(key => {
-                assert.equal(key, STORAGE_KEY);
+            const storage = mockStorage(key => {
+                expect(key).toBe(STORAGE_KEY);
                 done();
                 return xs.empty();
             });
-
-            readStateFromStorage(sources);
+            readStateFromStorage(storage);
         });
 
         it('start with no todos', done => {
@@ -109,7 +106,7 @@ describe('Intent tests', () => {
 
             storage$.addListener({
                 next: state => {
-                    assert.isOk(state.todos.isEmpty());
+                    expect(state.todos.isEmpty()).toBeTruthy();
                     done();
                 }
             });

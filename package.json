@@ -17,8 +17,6 @@
   ],
   "main": "index.ts",
   "dependencies": {
-    "todomvc-app-css": "^2.1.0",
-    "todomvc-common": "^1.0.3",
     "@cycle/collection": "^0.5.1",
     "@cycle/dom": "^17.1.0",
     "@cycle/history": "^6.1.0",
@@ -26,21 +24,24 @@
     "@cycle/run": "^3.1.0",
     "@cycle/storage": "^4.0.0",
     "@types/uuid": "^2.0.29",
-    "xstream": "^10.5.0",
     "immutable": "^3.8.1",
-    "uuid": "^3.0.1"
+    "todomvc-app-css": "^2.1.0",
+    "todomvc-common": "^1.0.3",
+    "uuid": "^3.0.1",
+    "xstream": "^10.5.0"
   },
   "devDependencies": {
-    "typescript": "^2.2.2",
-    "@types/chai": "^3.4.35",
-    "@types/mocha": "^2.2.40",
-    "webpack": "^2.3.3",
+    "@types/jest": "^19.2.2",
     "html-webpack-plugin": "^2.28.0",
-    "webpack-dev-server": "^2.4.2",
+    "jest": "^19.0.2",
     "path": "^0.12.7",
     "source-map-loader": "^0.2.1",
+    "ts-jest": "^19.0.9",
     "ts-loader": "^2.0.3",
-    "ts-node": "^3.0.2"
+    "ts-node": "^3.0.2",
+    "typescript": "^2.2.2",
+    "webpack": "^2.3.3",
+    "webpack-dev-server": "^2.4.2"
   },
   "scripts": {
     "dev": "webpack-dev-server --open",
@@ -49,13 +50,12 @@
   },
   "jest": {
     "roots": [
-      "dist/",
       "src/test/ts/"
     ],
     "transform": {
       ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
-    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.ts$",
     "moduleFileExtensions": [
       "ts",
       "tsx",

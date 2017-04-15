@@ -9,7 +9,6 @@ import TodoListItem, {Sinks as ItemSinks} from './item/index';
 import {model, State} from './model';
 import {view} from './view';
 import {intent, Intent} from './intent';
-import dropRepeats from 'xstream/extra/dropRepeats';
 
 export const NEW_TODO_CLASS = '.new-todo';
 export const TOGGLE_ALL = 'toggle-all';
