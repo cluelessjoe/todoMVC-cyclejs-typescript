@@ -2,7 +2,7 @@ import {List} from 'immutable';
 import xs, {Stream} from 'xstream';
 import * as uuid from 'uuid';
 
-import {ClearCompleted, CompleteAllToggleChanged, CompleteState, CompleteToggleChanged, Intent, NewTodoAdded, RouteChanged, RouteState, TodoDeleted, TodoUpdated} from './intent';
+import {ClearCompleted, CompleteAllToggleChanged, CompleteState, CompleteToggleChanged, Action, NewTodoAdded, RouteChanged, RouteState, TodoDeleted, TodoUpdated} from './intent';
 import {Route, ROUTE_ACTIVE, ROUTE_ALL, ROUTE_COMPLETED, ROUTE_DEFAULT} from './index';
 
 export class Todo {
@@ -139,7 +139,7 @@ type UpdateTodoPayload = {
     todo: Todo
 }
 
-function mapToReducers(actions$: Stream<Intent>): Stream<Reducer> {
+function mapToReducers(actions$: Stream<Action>): Stream<Reducer> {
     const addTodoReducer$ = filterActionWithType(actions$, NewTodoAdded)
         .map(action => (state) => state.add(action.value));
     const deleteTodoReducer$ = filterActionWithType(actions$, TodoDeleted)
@@ -172,30 +172,30 @@ function mapToReducers(actions$: Stream<Intent>): Stream<Reducer> {
     );
 }
 
-function mapRouteChanged(actions$: Stream<Intent>, state: RouteState, reducer: Reducer): Stream<Reducer> {
+function mapRouteChanged(actions$: Stream<Action>, state: RouteState, reducer: Reducer): Stream<Reducer> {
     return filterActionWithType(actions$, RouteChanged)
         .filter(action => action.value === state)
         .mapTo(reducer);
 }
 
-function mapCompleteToggleChanged(actions$: Stream<Intent>, state: CompleteState, stateUpdateFn: UpdateCompleteStateFunction): Stream<Reducer> {
+function mapCompleteToggleChanged(actions$: Stream<Action>, state: CompleteState, stateUpdateFn: UpdateCompleteStateFunction): Stream<Reducer> {
     return filterActionWithType(actions$, CompleteToggleChanged)
         .map(action => action.value as CompleteToggleChangePayload)
         .filter(payload => payload.state === state)
         .map(payload => (state) => stateUpdateFn(state, payload.todo));
 }
 
-function mapCompleteAllToggleChanged(actions$: Stream<Intent>, state: CompleteState, reducer: Reducer): Stream<Reducer> {
+function mapCompleteAllToggleChanged(actions$: Stream<Action>, state: CompleteState, reducer: Reducer): Stream<Reducer> {
     return filterActionWithType(actions$, CompleteAllToggleChanged)
         .filter(action => action.value === state)
         .mapTo(reducer);
 }
 
-function filterActionWithType(actions$: Stream<Intent>, type: string): Stream<Intent> {
+function filterActionWithType(actions$: Stream<Action>, type: string): Stream<Action> {
     return actions$.filter(action => action.type === type);
 }
 
-export function model(state$: Stream<State>, actions$: Stream<Intent>): Stream<State> {
+export function model(state$: Stream<State>, actions$: Stream<Action>): Stream<State> {
     const reducers$ = mapToReducers(actions$);
     return state$
         .map(initState => reducers$.fold((todos, reducer) => reducer(todos), initState))

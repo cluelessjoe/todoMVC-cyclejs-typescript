@@ -2,7 +2,7 @@ import {Stream} from 'xstream';
 import {DOMSource, VNode} from '@cycle/dom';
 
 import {Todo} from '../model';
-import {Intent} from '../intent';
+import {Action} from '../intent';
 import {intents} from './intent';
 import {model} from './model';
 import {view} from './view';
@@ -18,7 +18,7 @@ export type Sources = {
 };
 export type Sinks = {
     DOM: Stream<VNode>,
-    actions$: Stream<Intent>
+    actions$: Stream<Action>
 };
 
 function TodoListItem(sources: Sources): Sinks {

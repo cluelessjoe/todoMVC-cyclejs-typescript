@@ -6,7 +6,7 @@ import {mockDOMSource, MockConfig} from "@cycle/dom";
 import {newTodoAddedIntent} from "../../main/ts/components/todo/list/intent";
 
 
-describe('Intent tests', () => {
+describe('Action tests', () => {
 
     describe('New todo intents', () => {
         it('create the todo on pressing enter key', (done) => {

@@ -16,7 +16,7 @@ export enum RouteState {ALL, ACTIVE, COMPLETED}
 
 export const ClearCompleted = 'ClearCompleted';
 
-export class Intent {
+export class Action {
     constructor(readonly type: string, readonly value: Object) {
     }
 }
@@ -30,14 +30,14 @@ export function intent(sources: Sources) {
     );
 }
 
-function completeAllIntent(sources: Sources): Stream<Intent> {
+function completeAllIntent(sources: Sources): Stream<Action> {
     return sources.DOM.select('#toggle-all')
         .events(CLICK_EVENT)
         .map(ev => (ev as any).target.checked)
-        .map(checked => new Intent(CompleteAllToggleChanged, (checked ? CompleteState.COMPLETED : CompleteState.UNCOMPLETED)));
+        .map(checked => new Action(CompleteAllToggleChanged, (checked ? CompleteState.COMPLETED : CompleteState.UNCOMPLETED)));
 }
 
-function routeChangedIntent(sources: Sources): Stream<Intent> {
+function routeChangedIntent(sources: Sources): Stream<Action> {
     return sources.History
         .startWith({pathname: ROUTE_DEFAULT.hash})
         .map(location => location.hash)
@@ -51,22 +51,22 @@ function routeChangedIntent(sources: Sources): Stream<Intent> {
             } else {
                 state = RouteState.ALL;
             }
-            return new Intent(RouteChanged, state);
+            return new Action(RouteChanged, state);
         })
 }
 
 function clearCompleted(sources: Sources) {
     return sources.DOM.select(CLEAR_COMPLETED_CLASS)
         .events(CLICK_EVENT)
-        .map(e => new Intent(ClearCompleted, null))
+        .map(e => new Action(ClearCompleted, null))
 }
 
-export function newTodoAddedIntent(sources: Sources): Stream<Intent> {
+export function newTodoAddedIntent(sources: Sources): Stream<Action> {
     return sources.DOM.select(NEW_TODO_CLASS)
         .events(KEY_DOWN_EVENT)
         .map(ev => ev as KeyboardEvent)
         .filter(ev => ev.keyCode === ENTER_KEY)
         .map(ev => String((ev.target as HTMLInputElement).value).trim())
         .filter(value => value !== '')
-        .map(v => new Intent(NewTodoAdded, v));
+        .map(v => new Action(NewTodoAdded, v));
 }

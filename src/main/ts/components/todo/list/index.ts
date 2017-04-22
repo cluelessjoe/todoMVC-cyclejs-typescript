@@ -8,7 +8,7 @@ import {VNode} from 'snabbdom/vnode';
 import TodoListItem, {Sinks as ItemSinks} from './item/index';
 import {model, State} from './model';
 import {view} from './view';
-import {intent, Intent} from './intent';
+import {intent, Action} from './intent';
 
 export const NEW_TODO_CLASS = '.new-todo';
 export const TOGGLE_ALL = 'toggle-all';
@@ -39,7 +39,7 @@ export const ROUTE_COMPLETED = new Route('Completed', '#/completed');
 export const ROUTE_DEFAULT = ROUTE_ALL;
 
 export function TodoList(sources: Sources): Sinks {
-    const intentProxy$ = xs.create<Intent>();
+    const intentProxy$ = xs.create<Action>();
 
     const intent$ = intent(sources);
 
