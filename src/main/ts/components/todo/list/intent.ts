@@ -8,8 +8,8 @@ import {CLICK_EVENT} from '../../../dom/Events';
 export const NewTodoAdded = 'NewTodoAdded';
 export const TodoDeleted = 'TodoDeleted';
 export const TodoUpdated = 'TodoUpdated';
-export const CompleteToggleChanged = 'CompleteToggleChanged';
-export const CompleteAllToggleChanged = 'CompleteAllToggleChanged';
+export const CompleteToggleChanged = 'CompleteToggleChanged'; //FIXME Toggle in the name
+export const CompleteAllToggleChanged = 'CompleteAllToggleChanged'; //FIXME Toggle in the name
 export enum CompleteState {COMPLETED, UNCOMPLETED}
 export const RouteChanged = 'RouteChanged';
 export enum RouteState {ALL, ACTIVE, COMPLETED}

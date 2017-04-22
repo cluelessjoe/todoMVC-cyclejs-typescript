@@ -12,9 +12,10 @@ export const EditEnded = 'EditEnded';
 export function intents(sources: Sources): Stream<Action> {
     const editInputKey$ = sources.DOM.select(EDIT_CLASS)
         .events(KEY_UP_EVENT)
-        .map(ev => ev as KeyboardEvent);
+        .map(ev => ev as KeyboardEvent)
+        .debug("1");
 
-    const editInputEnterKey$ = editInputKey$.filter(ev => ev.keyCode === ENTER_KEY);
+    const editInputEnterKey$ = editInputKey$.filter(ev => ev.keyCode === ENTER_KEY).debug("2");
 
     const valueUpdated$ = editInputEnterKey$
         .map(ev => String((ev.target as HTMLInputElement).value).trim());
@@ -24,11 +25,9 @@ export function intents(sources: Sources): Stream<Action> {
         valueUpdated$.filter(val => val.length === 0)
     );
 
-    const updateTodo$ = xs.combine(valueUpdated$.filter(val => val.length !== 0), sources.props$)
-        .map(valAndProps => new Action(TodoUpdated, {
-            text: valAndProps[0],
-            todo: valAndProps[1].todo
-        }));
+    const updateTodo$ = valueUpdated$
+        .filter(val => val.length !== 0)
+        .map(value => new Action(TodoUpdated, value));
 
     const deleteTodo$ = xs.combine(deleteIntent$, sources.props$)
         .map(evAndProps => new Action(TodoDeleted, evAndProps[1].todo));
@@ -37,11 +36,8 @@ export function intents(sources: Sources): Stream<Action> {
         .events(CHANGE_EVENT)
         .map(ev => (ev as any).target.checked);
 
-    const toggleCompleteTodo$ = xs.combine(completeToggleClicked$, sources.props$)
-        .map(checkedAndProps => new Action(CompleteToggleChanged, {
-            state: checkedAndProps[0] ? CompleteState.COMPLETED : CompleteState.UNCOMPLETED,
-            todo: checkedAndProps[1].todo
-        }));
+    const toggleCompleteTodo$ = completeToggleClicked$
+        .map(checked => new Action(CompleteToggleChanged, checked ? CompleteState.COMPLETED : CompleteState.UNCOMPLETED));
 
     const startEditing$ = sources.DOM.select(LABEL)
         .events(DOUBLE_CLICK_EVENT)
@@ -52,6 +48,7 @@ export function intents(sources: Sources): Stream<Action> {
     const editInputEscKey$ = editInputKey$.filter(ev => ev.keyCode === ESC_KEY);
 
     const stopEditing$ = xs.merge(blurEditInput$, editInputEnterKey$, editInputEscKey$)
+        .debug("3")
         .mapTo(new Action(EditEnded, ''));
 
     return xs.merge(
