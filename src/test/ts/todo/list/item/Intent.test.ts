@@ -33,7 +33,7 @@ describe('Todo Item intent tests', () => {
         });
 
         function checkTodoDeleted(mockConfig: {}, done) {
-            checkAction(mockConfig, TodoDeleted, done);
+            checkAction(mockConfig, TodoDeleted, done);//FIXME : this doesn't warranty that the todo is really deleted... Could we do black box test, aka testing from the outside and making sure on the outgoing state? Feels more "refactoring proof", which is our aim here :$
         }
     });
 
