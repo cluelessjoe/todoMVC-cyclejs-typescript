@@ -37,7 +37,6 @@ export class State {
         this.allCompleted = this.actives.isEmpty();
     }
 
-
     add(value: string): State {
         return this.newTodoListState(this.todos.insert(0, new Todo(value)))
     }

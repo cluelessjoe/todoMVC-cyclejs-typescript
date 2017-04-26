@@ -12,10 +12,9 @@ export const EditEnded = 'EditEnded';
 export function intents(sources: Sources): Stream<Action> {
     const editInputKey$ = sources.DOM.select(EDIT_CLASS)
         .events(KEY_UP_EVENT)
-        .map(ev => ev as KeyboardEvent)
-        .debug("1");
+        .map(ev => ev as KeyboardEvent);
 
-    const editInputEnterKey$ = editInputKey$.filter(ev => ev.keyCode === ENTER_KEY).debug("2");
+    const editInputEnterKey$ = editInputKey$.filter(ev => ev.keyCode === ENTER_KEY);
 
     const valueUpdated$ = editInputEnterKey$
         .map(ev => String((ev.target as HTMLInputElement).value).trim());
@@ -48,7 +47,6 @@ export function intents(sources: Sources): Stream<Action> {
     const editInputEscKey$ = editInputKey$.filter(ev => ev.keyCode === ESC_KEY);
 
     const stopEditing$ = xs.merge(blurEditInput$, editInputEnterKey$, editInputEscKey$)
-        .debug("3")
         .mapTo(new Action(EditEnded, ''));
 
     return xs.merge(
