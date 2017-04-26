@@ -1,9 +1,9 @@
 import xs, {Stream} from "xstream";
-import {readStateFromStorage, STORAGE_KEY} from "../../main/ts/components/todo/app/index";
-import {NEW_TODO_CLASS} from "../../main/ts/components/todo/list/index";
-import {ENTER_KEY, KEY_DOWN_EVENT} from "../../main/ts/dom/Keys";
+import {readStateFromStorage, STORAGE_KEY} from "../../../../../main/ts/components/todo/app/index";
+import {NEW_TODO_CLASS} from "../../../../../main/ts/components/todo/list/index";
+import {ENTER_KEY, KEY_DOWN_EVENT} from "../../../../../main/ts/dom/Keys";
 import {mockDOMSource, MockConfig} from "@cycle/dom";
-import {newTodoAddedIntent} from "../../main/ts/components/todo/list/intent";
+import {newTodoAddedIntent} from "../../../../../main/ts/components/todo/list/intent";
 
 
 describe('Intent tests', () => {

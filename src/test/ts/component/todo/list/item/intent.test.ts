@@ -1,12 +1,12 @@
 import {mockDOMSource} from "@cycle/dom";
 import xs, {Stream} from 'xstream';
 
-import {EditEnded, EditStarted, intents} from "../../../../../main/ts/components/todo/list/item/intent";
-import {COMPLETED_TOGGLE_CLASS, DELETED_CLASS, EDIT_CLASS, LABEL} from "../../../../../main/ts/components/todo/list/item/view";
-import {BLUR_EVENT, CHANGE_EVENT, CLICK_EVENT, DOUBLE_CLICK_EVENT} from "../../../../../main/ts/dom/Events";
-import {Todo} from "../../../../../main/ts/components/todo/list/model";
-import {Action, CompleteState, CompleteToggleChanged, TodoDeleted, TodoUpdated} from "../../../../../main/ts/components/todo/list/intent";
-import {ENTER_KEY, ESC_KEY, KEY_UP_EVENT} from "../../../../../main/ts/dom/Keys";
+import {EditEnded, EditStarted, intents} from "../../../../../../main/ts/components/todo/list/item/intent";
+import {COMPLETED_TOGGLE_CLASS, DELETED_CLASS, EDIT_CLASS, LABEL} from "../../../../../../main/ts/components/todo/list/item/view";
+import {BLUR_EVENT, CHANGE_EVENT, CLICK_EVENT, DOUBLE_CLICK_EVENT} from "../../../../../../main/ts/dom/Events";
+import {Todo} from "../../../../../../main/ts/components/todo/list/model";
+import {Action, CompleteState, CompleteToggleChanged, TodoDeleted, TodoUpdated} from "../../../../../../main/ts/components/todo/list/intent";
+import {ENTER_KEY, ESC_KEY, KEY_UP_EVENT} from "../../../../../../main/ts/dom/Keys";
 
 describe('Todo Item intent tests', () => {
 
