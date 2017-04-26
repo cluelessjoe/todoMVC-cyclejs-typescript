@@ -48,7 +48,7 @@ export function TodoList(sources: Sources): Sinks {
     const compos$: Stream<List<ItemSinks>> = state$
         .map(state => state.displayed)
         .map(todos => todos
-            .map((todo, index) => isolate(TodoListItem, todo.id)({
+            .map((todo, index) => isolate(TodoListItem, todo.id)({// FIXME : if can remove this todo.id, we could get rid of uuid (simpler example)
                 DOM: sources.DOM,
                 props$: xs.of({
                     'todo': todo
