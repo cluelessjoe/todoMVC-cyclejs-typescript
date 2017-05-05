@@ -12,7 +12,7 @@ import mock = jest.mock;
 
 describe('Todo list', () => {
     const createTodo: () => Todo = () => createTodoWithUuid(uuid.v4());
-    const createTodoWithUuid: (uuid: string) => Todo = uuid => new Todo("foo", false, uuid);
+    const createTodoWithUuid: (uuid: string) => Todo = uuid => new Todo("foo", uuid, false);
     const createState: (l: List<Todo>) => State = todos => new State(todos);
 
     it('net test', done => {
@@ -37,7 +37,8 @@ describe('Todo list', () => {
                 Range(0, todoNb)
                     .map(i => createTodoWithUuid(i.toString()))
                     .toList())
-            )
+            ),
+            idSupplier: () => "12"
         };
 
         const sinks: Sinks = TodoList(sources);

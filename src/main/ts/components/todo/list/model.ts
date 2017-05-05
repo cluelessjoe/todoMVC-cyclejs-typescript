@@ -36,8 +36,8 @@ export class State {
         this.allCompleted = this.actives.isEmpty();
     }
 
-    add(value: string): State {
-        return this.newTodoListState(this.todos.insert(0, new Todo(value, "1"))) //FIXME
+    add(value: string, id: string): State {
+        return this.newTodoListState(this.todos.insert(0, new Todo(value, id)))
     }
 
     drop(todo: Todo): State {
@@ -48,7 +48,7 @@ export class State {
         return this.newTodoListState(
             this.todos.set(
                 this.getTodoIndex(todo),
-                new Todo(text, "1", todo.completed)//FIXME
+                new Todo(text, todo.id, todo.completed)
             ));
     }
 
@@ -64,7 +64,7 @@ export class State {
         return this.newTodoListState(
             this.todos.set(
                 this.getTodoIndex(todo),
-                new Todo(todo.text, "1", state)))//FIXME
+                new Todo(todo.text, todo.id, state)))
     }
 
     private getTodoIndex(todo: Todo) {
@@ -80,7 +80,7 @@ export class State {
     }
 
     private toggleAllTodoState(state: boolean) {
-        const newTodos = this.todos.map(t => new Todo(t.text, "1", state)).toList();//FIXME
+        const newTodos = this.todos.map(t => new Todo(t.text, t.id, state)).toList();
         return this.newTodoListState(newTodos);
     }
 
@@ -137,14 +137,17 @@ type UpdateTodoPayload = {
     todo: Todo
 }
 
-function mapToReducers(actions$: Stream<Action>): Stream<Reducer> {
+function mapToReducers(idSupplier: () => string, actions$: Stream<Action>): Stream<Reducer> {
     const addTodoReducer$ = filterActionWithType(actions$, NewTodoAdded)
-        .map(action => (state) => state.add(action.value));
+        .map(action => (state) => state.add(action.value, idSupplier()));
+
     const deleteTodoReducer$ = filterActionWithType(actions$, TodoDeleted)
         .map(action => (state) => state.drop(action.value));
+
     const updateTodoReducer$ = filterActionWithType(actions$, TodoUpdated)
         .map(action => action.value as UpdateTodoPayload)
         .map(value => (state) => state.update(value.text, value.todo));
+
     const completedTodoReducer$ = mapCompleteToggleChanged(actions$, CompleteState.COMPLETED, (state, todo) => state.complete(todo));
     const uncompletedTodoReducer$ = mapCompleteToggleChanged(actions$, CompleteState.UNCOMPLETED, (state, todo) => state.uncomplete(todo));
     const completeAllTodoReducer$ = mapCompleteAllToggleChanged(actions$, CompleteState.COMPLETED, state => state.completeAll());
@@ -193,11 +196,10 @@ function filterActionWithType(actions$: Stream<Action>, type: string): Stream<Ac
     return actions$.filter(action => action.type === type);
 }
 
-export function model(state$: Stream<State>, actions$: Stream<Action>): Stream<State> {
-    const reducers$ = mapToReducers(actions$);
+export function model(state$: Stream<State>, idSupplier: () => string, actions$: Stream<Action>): Stream<State> {
+    const reducers$ = mapToReducers(idSupplier, actions$);
     return state$
         .map(initState => reducers$.fold((todos, reducer) => reducer(todos), initState))
         .flatten()
-        .remember()
-        ;
+        .remember();
 }

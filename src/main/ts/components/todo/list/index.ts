@@ -1,14 +1,14 @@
-import isolate from '@cycle/isolate';
-import {List} from 'immutable';
-import {GenericInput, HistoryInput} from '@cycle/history';
-import {DOMSource} from '@cycle/dom';
-import xs, {Stream} from 'xstream';
-import {VNode} from 'snabbdom/vnode';
+import isolate from "@cycle/isolate";
+import {List} from "immutable";
+import {GenericInput, HistoryInput} from "@cycle/history";
+import {DOMSource} from "@cycle/dom";
+import xs, {Stream} from "xstream";
+import {VNode} from "snabbdom/vnode";
 
-import TodoListItem, {Sinks as ItemSinks} from './item/index';
-import {model, State} from './model';
-import {view} from './view';
-import {intent, Action} from './intent';
+import TodoListItem, {Sinks as ItemSinks} from "./item/index";
+import {model, State} from "./model";
+import {view} from "./view";
+import {Action, intent} from "./intent";
 
 export const NEW_TODO_CLASS = '.new-todo';
 export const TOGGLE_ALL = 'toggle-all';
@@ -19,8 +19,10 @@ export const CLEAR_COMPLETED_CLASS = '.clear-completed';
 export type Sources = {
     DOM: DOMSource,
     History: any,
-    initialState$: Stream<State>
+    initialState$: Stream<State>,
+    idSupplier: () => string
 };
+
 export type Sinks = {
     DOM: Stream<VNode>,
     History: Stream<HistoryInput | GenericInput | string>,
@@ -43,7 +45,7 @@ export function TodoList(sources: Sources): Sinks {
 
     const intent$ = intent(sources);
 
-    const state$ = model(sources.initialState$, intentProxy$);
+    const state$ = model(sources.initialState$, sources.idSupplier, intentProxy$);
 
     const compos$: Stream<List<ItemSinks>> = state$
         .map(state => state.displayed)
