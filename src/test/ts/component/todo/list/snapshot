@@ -1,0 +1,300 @@
+{
+    "sel": "div",
+    "data": {},
+    "children": [
+        {
+            "sel": "header.header",
+            "data": {},
+            "children": [
+                {
+                    "sel": "h1",
+                    "data": {},
+                    "text": "todos"
+                },
+                {
+                    "sel": "input.new-todo",
+                    "data": {
+                        "props": {
+                            "type": "text",
+                            "placeholder": "What needs to be done?",
+                            "autofocus": true,
+                            "name": "newTodo"
+                        },
+                        "hook": {}
+                    }
+                }
+            ]
+        },
+        {
+            "sel": "section.main",
+            "data": {},
+            "children": [
+                {
+                    "sel": "input#toggle-all.toggle-all",
+                    "data": {
+                        "attrs": {
+                            "type": "checkbox",
+                            "checked": false
+                        },
+                        "hook": {}
+                    }
+                },
+                {
+                    "sel": "label",
+                    "data": {
+                        "attrs": {
+                            "for": "toggle-all"
+                        }
+                    }
+                },
+                {
+                    "sel": "ul.todo-list",
+                    "data": {},
+                    "children": [
+                        {
+                            "sel": "li.___8b6cfccc-cd65-4c4b-a8f4-197698331488",
+                            "data": "",
+                            "children": [
+                                {
+                                    "sel": "div.view",
+                                    "data": {},
+                                    "children": [
+                                        {
+                                            "sel": "input.toggle",
+                                            "data": {
+                                                "attrs": {
+                                                    "type": "checkbox",
+                                                    "checked": false
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "sel": "label",
+                                            "data": {},
+                                            "text": "foo"
+                                        },
+                                        {
+                                            "sel": "button.destroy",
+                                            "data": {}
+                                        }
+                                    ]
+                                },
+                                {
+                                    "sel": "input.edit",
+                                    "data": {
+                                        "attrs": {
+                                            "value": "foo"
+                                        },
+                                        "hook": {}
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "sel": "li.___0",
+                            "data": "",
+                            "children": [
+                                {
+                                    "sel": "div.view",
+                                    "data": {},
+                                    "children": [
+                                        {
+                                            "sel": "input.toggle",
+                                            "data": {
+                                                "attrs": {
+                                                    "type": "checkbox",
+                                                    "checked": false
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "sel": "label",
+                                            "data": {},
+                                            "text": "foo"
+                                        },
+                                        {
+                                            "sel": "button.destroy",
+                                            "data": {}
+                                        }
+                                    ]
+                                },
+                                {
+                                    "sel": "input.edit",
+                                    "data": {
+                                        "attrs": {
+                                            "value": "foo"
+                                        },
+                                        "hook": {}
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "sel": "li.___1",
+                            "data": "",
+                            "children": [
+                                {
+                                    "sel": "div.view",
+                                    "data": {},
+                                    "children": [
+                                        {
+                                            "sel": "input.toggle",
+                                            "data": {
+                                                "attrs": {
+                                                    "type": "checkbox",
+                                                    "checked": false
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "sel": "label",
+                                            "data": {},
+                                            "text": "foo"
+                                        },
+                                        {
+                                            "sel": "button.destroy",
+                                            "data": {}
+                                        }
+                                    ]
+                                },
+                                {
+                                    "sel": "input.edit",
+                                    "data": {
+                                        "attrs": {
+                                            "value": "foo"
+                                        },
+                                        "hook": {}
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "sel": "li.___2",
+                            "data": "",
+                            "children": [
+                                {
+                                    "sel": "div.view",
+                                    "data": {},
+                                    "children": [
+                                        {
+                                            "sel": "input.toggle",
+                                            "data": {
+                                                "attrs": {
+                                                    "type": "checkbox",
+                                                    "checked": false
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "sel": "label",
+                                            "data": {},
+                                            "text": "foo"
+                                        },
+                                        {
+                                            "sel": "button.destroy",
+                                            "data": {}
+                                        }
+                                    ]
+                                },
+                                {
+                                    "sel": "input.edit",
+                                    "data": {
+                                        "attrs": {
+                                            "value": "foo"
+                                        },
+                                        "hook": {}
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "sel": "footer.footer",
+            "data": {},
+            "children": [
+                {
+                    "sel": "span.todo-count",
+                    "data": {},
+                    "children": [
+                        {
+                            "sel": "strong",
+                            "data": {},
+                            "text": 4
+                        },
+                        {
+                            "text": " items left"
+                        }
+                    ]
+                },
+                {
+                    "sel": "ul.filters",
+                    "data": {},
+                    "children": [
+                        {
+                            "sel": "li",
+                            "data": {},
+                            "children": [
+                                {
+                                    "sel": "a",
+                                    "data": {
+                                        "props": {
+                                            "href": "#/"
+                                        },
+                                        "class": {
+                                            "selected": true
+                                        }
+                                    },
+                                    "text": "All"
+                                }
+                            ]
+                        },
+                        {
+                            "sel": "li",
+                            "data": {},
+                            "children": [
+                                {
+                                    "sel": "a",
+                                    "data": {
+                                        "props": {
+                                            "href": "#/active"
+                                        },
+                                        "class": {
+                                            "selected": false
+                                        }
+                                    },
+                                    "text": "Active"
+                                }
+                            ]
+                        },
+                        {
+                            "sel": "li",
+                            "data": {},
+                            "children": [
+                                {
+                                    "sel": "a",
+                                    "data": {
+                                        "props": {
+                                            "href": "#/completed"
+                                        },
+                                        "class": {
+                                            "selected": false
+                                        }
+                                    },
+                                    "text": "Completed"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sel": "button.clear-completed",
+                    "data": {},
+                    "text": "Clear completed (0)"
+                }
+            ]
+        }
+    ]
+}

@@ -1,12 +1,11 @@
-import {List} from 'immutable';
-import xs, {Stream} from 'xstream';
-import * as uuid from 'uuid';
+import {List} from "immutable";
+import xs, {Stream} from "xstream";
 
-import {ClearCompleted, CompleteAllToggleChanged, CompleteState, CompleteToggleChanged, Action, NewTodoAdded, RouteChanged, RouteState, TodoDeleted, TodoUpdated} from './intent';
-import {Route, ROUTE_ACTIVE, ROUTE_ALL, ROUTE_COMPLETED, ROUTE_DEFAULT} from './index';
+import {Action, ClearCompleted, CompleteAllToggleChanged, CompleteState, CompleteToggleChanged, NewTodoAdded, RouteChanged, RouteState, TodoDeleted, TodoUpdated} from "./intent";
+import {Route, ROUTE_ACTIVE, ROUTE_ALL, ROUTE_COMPLETED, ROUTE_DEFAULT} from "./index";
 
 export class Todo {
-    constructor(readonly text: string, readonly completed: boolean = false, readonly id: string = uuid.v4()) {
+    constructor(readonly text: string, readonly id: string, readonly completed: boolean = false) {
     }
 }
 
@@ -38,7 +37,7 @@ export class State {
     }
 
     add(value: string): State {
-        return this.newTodoListState(this.todos.insert(0, new Todo(value)))
+        return this.newTodoListState(this.todos.insert(0, new Todo(value, "1"))) //FIXME
     }
 
     drop(todo: Todo): State {
@@ -49,7 +48,7 @@ export class State {
         return this.newTodoListState(
             this.todos.set(
                 this.getTodoIndex(todo),
-                new Todo(text, todo.completed)
+                new Todo(text, "1", todo.completed)//FIXME
             ));
     }
 
@@ -65,7 +64,7 @@ export class State {
         return this.newTodoListState(
             this.todos.set(
                 this.getTodoIndex(todo),
-                new Todo(todo.text, state)))
+                new Todo(todo.text, "1", state)))//FIXME
     }
 
     private getTodoIndex(todo: Todo) {
@@ -81,7 +80,7 @@ export class State {
     }
 
     private toggleAllTodoState(state: boolean) {
-        const newTodos = this.todos.map(t => new Todo(t.text, state)).toList();
+        const newTodos = this.todos.map(t => new Todo(t.text, "1", state)).toList();//FIXME
         return this.newTodoListState(newTodos);
     }
 

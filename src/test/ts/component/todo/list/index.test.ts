@@ -2,12 +2,60 @@ import {div, li, mockDOMSource, ul, VNode} from "@cycle/dom";
 import xs from "xstream";
 import {List, Range} from "immutable";
 
-import {Sinks, TodoList} from "../../../../../main/ts/components/todo/list/index";
+import {NEW_TODO_CLASS, Sinks, TodoList} from "../../../../../main/ts/components/todo/list/index";
 import {State, Todo} from "../../../../../main/ts/components/todo/list/model";
+import {ENTER_KEY, KEY_DOWN_EVENT} from "../../../../../main/ts/dom/Keys";
+import * as fs from "fs";
+import * as path from "path";
+import * as uuid from "uuid";
+import mock = jest.mock;
 
 describe('Todo list', () => {
-    const createTodo: () => Todo = () => new Todo("foo");
+    const createTodo: () => Todo = () => createTodoWithUuid(uuid.v4());
+    const createTodoWithUuid: (uuid: string) => Todo = uuid => new Todo("foo", false, uuid);
     const createState: (l: List<Todo>) => State = todos => new State(todos);
+
+    it('net test', done => {
+        const todoNb = 3;
+        const newValue = "foo";
+
+        const mockConfig = {
+            [NEW_TODO_CLASS]: {
+                [KEY_DOWN_EVENT]: xs.of({
+                    keyCode: ENTER_KEY,
+                    target: {
+                        value: newValue
+                    }
+                }),
+            }
+        };
+
+        const sources = {
+            DOM: mockDOMSource(mockConfig),
+            History: xs.empty(),
+            initialState$: xs.of(createState(
+                Range(0, todoNb)
+                    .map(i => createTodoWithUuid(i.toString()))
+                    .toList())
+            )
+        };
+
+        const sinks: Sinks = TodoList(sources);
+
+        sinks.DOM.addListener({
+            next: vdom => {
+                const stringify = JSON.stringify(vdom, null, 4);
+                const filename = path.resolve(__dirname, "snapshot");
+                if (fs.existsSync(filename)) {
+                    const read = fs.readFileSync(filename).toString();
+                    expect(read).toEqual(stringify);
+                } else {
+                    fs.writeFileSync(filename, stringify);
+                }
+                done();
+            }
+        });
+    });
 
     it('displays a list of todos', done => {
         const todoNb = 3;
@@ -21,16 +69,18 @@ describe('Todo list', () => {
 
         sinks.DOM.addListener({
             next: vdom => {
-                const mainSection = vdom.children[1];
-                const ul = mainSection.children[2];
-                expect(ul.children.length).toBe(todoNb);
+                const lis = walkTree(vdom, "li");
+                expect(lis.length).toBe(todoNb);
                 done();
             }
         })
     });
 
     function walkTree(vnode: VNode, sel: string): VNode[] {
-        const children: VNode[] = vnode.children
+        const vnodeChildren = vnode.children;
+        if (!vnodeChildren) return [];
+
+        const children: VNode[] = vnodeChildren
             .filter(vnode => typeof vnode !== 'string')
             .map(vnode => vnode as VNode);
 
