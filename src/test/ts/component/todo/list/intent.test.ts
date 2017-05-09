@@ -26,7 +26,8 @@ describe('Intent tests', () => {
             const sources = {
                 DOM: mockDOMSource(mockConfig),
                 History: null,
-                initialState$: null
+                initialState$: null,
+                idSupplier: null
             };
 
             const newTodo$ = newTodoAddedIntent(sources);
@@ -61,7 +62,8 @@ describe('Intent tests', () => {
             const sources = {
                 DOM: mockDOMSource(mockConfig),
                 History: null,
-                initialState$: null
+                initialState$: null,
+                idSupplier: null
             };
 
             const newTodo$ = newTodoAddedIntent(sources);
