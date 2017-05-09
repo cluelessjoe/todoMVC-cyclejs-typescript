@@ -4,6 +4,7 @@ import {Stream} from "xstream";
 
 import {TodoList} from "../list/index";
 import {State, Todo} from "../list/model";
+import * as uuid from "uuid";
 
 export const STORAGE_KEY = 'todos-cyclejs';
 
@@ -11,7 +12,8 @@ export function TodoApp(sources): Sinks {
     const sinks = TodoList({
         DOM: sources.DOM,
         History: sources.History,
-        initialState$: readStateFromStorage(sources.storage)
+        initialState$: readStateFromStorage(sources.storage),
+        idSupplier: () => uuid.v4()
     });
 
     return {

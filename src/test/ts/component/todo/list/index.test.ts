@@ -63,7 +63,8 @@ describe('Todo list', () => {
         const sources = {
             DOM: mockDOMSource({}),
             History: xs.empty(),
-            initialState$: xs.of(createState(Range(0, todoNb).map(i => createTodo()).toList()))
+            initialState$: xs.of(createState(Range(0, todoNb).map(i => createTodo()).toList())),
+            idSupplier: () => "1"
         };
 
         const sinks: Sinks = TodoList(sources);

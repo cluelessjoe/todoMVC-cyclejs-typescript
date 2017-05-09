@@ -1,11 +1,11 @@
 import {mockDOMSource} from "@cycle/dom";
-import xs, {Stream} from 'xstream';
+import xs from "xstream";
 
 import {EditEnded, EditStarted, intents} from "../../../../../../main/ts/components/todo/list/item/intent";
 import {COMPLETED_TOGGLE_CLASS, DELETED_CLASS, EDIT_CLASS, LABEL} from "../../../../../../main/ts/components/todo/list/item/view";
 import {BLUR_EVENT, CHANGE_EVENT, CLICK_EVENT, DOUBLE_CLICK_EVENT} from "../../../../../../main/ts/dom/Events";
 import {Todo} from "../../../../../../main/ts/components/todo/list/model";
-import {Action, CompleteState, CompleteToggleChanged, TodoDeleted, TodoUpdated} from "../../../../../../main/ts/components/todo/list/intent";
+import {CompleteState, CompleteToggleChanged, TodoDeleted, TodoUpdated} from "../../../../../../main/ts/components/todo/list/intent";
 import {ENTER_KEY, ESC_KEY, KEY_UP_EVENT} from "../../../../../../main/ts/dom/Keys";
 
 describe('Todo Item intent tests', () => {
@@ -62,7 +62,7 @@ describe('Todo Item intent tests', () => {
             checkCompleteTodo(true, done, CompleteState.COMPLETED);
         });
 
-        it("uncomplete action toggle unchecked", (done) => {
+        it("incomplete action toggle unchecked", (done) => {
             checkCompleteTodo(false, done, CompleteState.UNCOMPLETED);
         });
 
@@ -104,7 +104,7 @@ describe('Todo Item intent tests', () => {
                 EditEnded,
                 done);
         });
-        
+
         it("stop editing on edit input esc pressed", (done) => {
             checkAction({
                     [EDIT_CLASS]: {
@@ -123,7 +123,7 @@ describe('Todo Item intent tests', () => {
     };
 
     function checkAction(mockConfig, expectedAction: string, done: Function, moreAssertion: Function = noop) {
-        const todo = new Todo("foo");
+        const todo = new Todo("foo", "1");
         const sources = {
             DOM: mockDOMSource(mockConfig),
             props$: xs.of({todo: todo})
