@@ -4,30 +4,46 @@ import {List, Range} from "immutable";
 
 import {NEW_TODO_CLASS, Sinks, TodoList} from "../../../../../main/ts/components/todo/list/index";
 import {State, Todo} from "../../../../../main/ts/components/todo/list/model";
-import {ENTER_KEY, KEY_DOWN_EVENT} from "../../../../../main/ts/dom/Keys";
+import {ENTER_KEY, KEY_DOWN_EVENT, KEY_UP_EVENT} from "../../../../../main/ts/dom/Keys";
 import * as fs from "fs";
 import * as path from "path";
 import * as uuid from "uuid";
+import {EDIT_CLASS} from "../../../../../main/ts/components/todo/list/item/view";
 import mock = jest.mock;
 
 describe('Todo list', () => {
     const createTodo: () => Todo = () => createTodoWithUuid(uuid.v4());
-    const createTodoWithUuid: (uuid: string) => Todo = uuid => new Todo("foo", uuid, false);
+    const createTodoWithUuid: (uuid: string) => Todo = uuid => new Todo("randomText" + uuid, uuid, false);
     const createState: (l: List<Todo>) => State = todos => new State(todos);
 
+    function writeToFile(overVdom: any) {
+        const currentJsonDom = JSON.stringify(overVdom, null, 2);
+        const filename = path.resolve(__dirname, "snapshot.json");
+        if (fs.existsSync(filename)) {
+            const savedJsonDom = fs.readFileSync(filename).toString();
+            expect(currentJsonDom).toEqual(savedJsonDom);
+        } else {
+            fs.writeFileSync(filename, currentJsonDom);
+        }
+    }
+
     it('net test', done => {
-        const todoNb = 3;
-        const newValue = "foo";
+        const todoNb = 1;
+        const newValue = "newTodoText";
+
+
+        const edit$ = xs.create();
+        const newTodo$ = xs.create();
 
         const mockConfig = {
+            '.___0': {
+                [EDIT_CLASS]: {
+                    [KEY_UP_EVENT]: edit$,
+                }
+            },
             [NEW_TODO_CLASS]: {
-                [KEY_DOWN_EVENT]: xs.of({
-                    keyCode: ENTER_KEY,
-                    target: {
-                        value: newValue
-                    }
-                }),
-            }
+                [KEY_DOWN_EVENT]: newTodo$,
+            },
         };
 
         const sources = {
@@ -38,22 +54,39 @@ describe('Todo list', () => {
                     .map(i => createTodoWithUuid(i.toString()))
                     .toList())
             ),
-            idSupplier: () => "12"
+            idSupplier: () => todoNb.toString()
         };
 
         const sinks: Sinks = TodoList(sources);
 
-        sinks.DOM.addListener({
+        var overVdom = null;
+        sinks.DOM.take(5).addListener({
             next: vdom => {
-                const stringify = JSON.stringify(vdom, null, 4);
-                const filename = path.resolve(__dirname, "snapshot");
-                if (fs.existsSync(filename)) {
-                    const read = fs.readFileSync(filename).toString();
-                    expect(read).toEqual(stringify);
-                } else {
-                    fs.writeFileSync(filename, stringify);
-                }
+                //console.log("next !!");
+                //writeToFile(vdom);
+                overVdom = vdom;
+            },
+            complete: () => {
+                console.log("complete");
+                writeToFile(overVdom);
                 done();
+            },
+            error: a => {
+                console.log("Error", a);
+            }
+        });
+
+       edit$.shamefullySendNext({
+            keyCode: ENTER_KEY,
+            target: {
+                value: "valuePostEdit"
+            }
+        });
+
+        newTodo$.shamefullySendNext({
+            keyCode: ENTER_KEY,
+            target: {
+                value: newValue
             }
         });
     });

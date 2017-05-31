@@ -24,9 +24,11 @@ export function intents(sources: Sources): Stream<Action> {
         valueUpdated$.filter(val => val.length === 0)
     );
 
-    const updateTodo$ = valueUpdated$
-        .filter(val => val.length !== 0)
-        .map(value => new Action(TodoUpdated, value));
+    const updateTodo$ = xs.combine(valueUpdated$.filter(val => val.length !== 0), sources.props$)
+        .map(valAndProps => new Action(TodoUpdated, {
+            text: valAndProps[0],
+            todo: valAndProps[1].todo
+        }));
 
     const deleteTodo$ = xs.combine(deleteIntent$, sources.props$)
         .map(evAndProps => new Action(TodoDeleted, evAndProps[1].todo));
@@ -35,8 +37,11 @@ export function intents(sources: Sources): Stream<Action> {
         .events(CHANGE_EVENT)
         .map(ev => (ev as any).target.checked);
 
-    const toggleCompleteTodo$ = completeToggleClicked$
-        .map(checked => new Action(CompleteToggleChanged, checked ? CompleteState.COMPLETED : CompleteState.UNCOMPLETED));
+    const toggleCompleteTodo$ = xs.combine(completeToggleClicked$, sources.props$)
+        .map(checkedAndProps => new Action(CompleteToggleChanged, {
+            state: checkedAndProps[0] ? CompleteState.COMPLETED : CompleteState.UNCOMPLETED,
+            todo: checkedAndProps[1].todo
+        }));
 
     const startEditing$ = sources.DOM.select(LABEL)
         .events(DOUBLE_CLICK_EVENT)

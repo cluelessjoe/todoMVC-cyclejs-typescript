@@ -159,9 +159,9 @@ function mapToReducers(idSupplier: () => string, actions$: Stream<Action>): Stre
     const allRouteReducers$ = mapRouteChanged(actions$, RouteState.ALL, state => state.displayAll());
 
     return xs.merge(
+        updateTodoReducer$,
         addTodoReducer$,
         deleteTodoReducer$,
-        updateTodoReducer$,
         completedTodoReducer$,
         uncompletedTodoReducer$,
         completeAllTodoReducer$,
@@ -193,7 +193,9 @@ function mapCompleteAllToggleChanged(actions$: Stream<Action>, state: CompleteSt
 }
 
 function filterActionWithType(actions$: Stream<Action>, type: string): Stream<Action> {
-    return actions$.filter(action => action.type === type);
+    return actions$.filter(action => action.type === type).map(x => {
+        return x;
+    });
 }
 
 export function model(state$: Stream<State>, idSupplier: () => string, actions$: Stream<Action>): Stream<State> {
@@ -201,5 +203,6 @@ export function model(state$: Stream<State>, idSupplier: () => string, actions$:
     return state$
         .map(initState => reducers$.fold((todos, reducer) => reducer(todos), initState))
         .flatten()
+        .map(x => {console.log("list state update"); return x;})
         .remember();
 }

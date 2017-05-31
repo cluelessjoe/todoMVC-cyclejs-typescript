@@ -69,7 +69,7 @@ export function TodoList(sources: Sources): Sinks {
         .map(todoItemsSinks => xs.combine(...todoItemsSinks.map(sink => sink.DOM).toArray()))
         .flatten();
 
-    let vdom$: Stream<VNode> = view(state$, todoItemSinks$);
+    let vdom$: Stream<VNode> = view(state$, todoItemSinks$.map(x => {console.log("item sink update");return x;}));
 
     return {
         DOM: vdom$,

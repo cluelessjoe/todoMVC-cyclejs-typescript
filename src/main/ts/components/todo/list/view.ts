@@ -7,6 +7,7 @@ import {CLEAR_COMPLETED_CLASS, NEW_TODO_CLASS, Route, ROUTE_ACTIVE, ROUTE_ALL, R
 
 export function view(state$: Stream<State>, todoItemSinks$: Stream<VNode[]>) {
     return xs.combine(state$, todoItemSinks$)
+        .map(x => {console.log("combine triggered"); return x;})
         .map(itemVdomAndTodos => {
             const state: State = itemVdomAndTodos[0];
             const itemsVdom = itemVdomAndTodos[1];
