@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@cycle/dom@^17.1.0":
+"@cycle/dom@^17.4.0":
   version "17.4.0"
   resolved "https://registry.yarnpkg.com/@cycle/dom/-/dom-17.4.0.tgz#232e9f21323b34b244000e0fa0a067642ae905d2"
   dependencies:
@@ -11,7 +11,7 @@
     snabbdom "0.6.9"
     snabbdom-selector "1.2.0"
 
-"@cycle/history@^6.1.0":
+"@cycle/history@^6.2.0":
   version "6.2.0"
   resolved "https://registry.yarnpkg.com/@cycle/history/-/history-6.2.0.tgz#df3290857b83ff06a0784b311ce1c712e6e76a97"
   dependencies:
@@ -34,7 +34,7 @@
   dependencies:
     "@cycle/run" "^3.0.0"
 
-"@types/history@^4.5.0":
+"@types/history@^4.5.1":
   version "4.5.1"
   resolved "https://registry.yarnpkg.com/@types/history/-/history-4.5.1.tgz#da4a145410466eac20e94b51c8778a7551d1d4db"
 
@@ -46,9 +46,9 @@
   version "7.0.27"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-7.0.27.tgz#ba5e1a87aca2b4f5817289615ffe56472927687e"
 
-"@types/uuid@^2.0.29":
-  version "2.0.30"
-  resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-2.0.30.tgz#4dca12da43ae530f89f46d6d203935d2199652d5"
+"@types/uuid@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-3.0.0.tgz#be93b14bcf97f59c079a9e58754960b5efd946c3"
   dependencies:
     "@types/node" "*"
 
@@ -4093,7 +4093,7 @@ xml-name-validator@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/xml-name-validator/-/xml-name-validator-2.0.1.tgz#4d8b8f1eccd3419aa362061becef515e1e559635"
 
-xstream@10.x, xstream@^10.5.0:
+xstream@10.x, xstream@^10.8.0:
   version "10.8.0"
   resolved "https://registry.yarnpkg.com/xstream/-/xstream-10.8.0.tgz#f3c70b12a71ef34dcc6af44ea7e1b0c40d320f4f"
   dependencies:

@@ -17,19 +17,19 @@
   ],
   "main": "index.ts",
   "dependencies": {
-    "@cycle/dom": "^17.1.0",
-    "@cycle/history": "^6.1.0",
+    "@cycle/dom": "^17.4.0",
+    "@cycle/history": "^6.2.0",
     "@cycle/isolate": "^2.1.0",
     "@cycle/run": "^3.1.0",
     "@cycle/storage": "^4.0.0",
-    "@types/history": "^4.5.0",
-    "@types/uuid": "^2.0.29",
+    "@types/history": "^4.5.1",
+    "@types/uuid": "^3.0.0",
     "history": "^4.6.1",
     "immutable": "^3.8.1",
     "todomvc-app-css": "^2.1.0",
     "todomvc-common": "^1.0.3",
     "uuid": "^3.0.1",
-    "xstream": "^10.5.0"
+    "xstream": "^10.8.0"
   },
   "devDependencies": {
     "@types/jest": "^19.2.2",
