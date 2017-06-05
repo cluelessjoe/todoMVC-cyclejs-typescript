@@ -17,7 +17,6 @@
   ],
   "main": "index.ts",
   "dependencies": {
-    "@cycle/collection": "^0.5.1",
     "@cycle/dom": "^17.1.0",
     "@cycle/history": "^6.1.0",
     "@cycle/isolate": "^2.1.0",
