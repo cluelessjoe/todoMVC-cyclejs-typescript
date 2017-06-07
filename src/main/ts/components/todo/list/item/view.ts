@@ -1,20 +1,19 @@
 import {button, div, input, label, li, VNode} from '@cycle/dom';
-import xs, {Stream} from 'xstream';
+import {Stream} from 'xstream';
 
-import {TodoListItemProps} from './index';
+import {Todo} from "../model";
 
 export const DELETED_CLASS = '.destroy';
 export const COMPLETED_TOGGLE_CLASS = '.toggle';
 export const EDIT_CLASS = '.edit';
 export const LABEL = 'label';
 
-export function view(state$: Stream<boolean>, props$: Stream<TodoListItemProps>): Stream<VNode> {
-    return xs.combine(state$, props$)
-        .map(propsAndEditing => {
-            const editing = propsAndEditing[0];
-            const props = propsAndEditing[1];
-            const text = props.todo.text;
-            const completed = props.todo.completed;
+export function view(state$: Stream<Todo>): Stream<VNode> {
+    return state$
+        .map(todo => {
+            const editing = todo.editing;
+            const text = todo.text;
+            const completed = todo.completed;
             const itemClass = getItemClass(editing, completed);
 
             return li(itemClass, [

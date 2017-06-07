@@ -5,7 +5,23 @@ import {Action, ClearCompleted, CompleteAllToggleChanged, CompleteState, Complet
 import {Route, ROUTE_ACTIVE, ROUTE_ALL, ROUTE_COMPLETED, ROUTE_DEFAULT} from "./index";
 
 export class Todo {
-    constructor(readonly text: string, readonly id: string, readonly completed: boolean = false) {
+    constructor(readonly text: string, readonly id: string, readonly completed: boolean = false, readonly editing: boolean = false) {
+    }
+
+    withText(text: string): Todo {
+        return new Todo(text, this.id, this.completed, this.editing);
+    }
+
+    withEditing(editing: boolean): Todo {
+        return new Todo(this.text, this.id, this.completed, editing);
+    }
+
+    withCompletedToggled(): Todo {
+        return this.withToggle(!this.completed);
+    }
+
+    withToggle(state: boolean): Todo {
+        return new Todo(this.text, this.id, state, this.editing);
     }
 }
 
@@ -48,8 +64,19 @@ export class State {
         return this.newTodoListState(
             this.todos.set(
                 this.getTodoIndex(todo),
-                new Todo(text, todo.id, todo.completed)
+                todo.withText(text)
             ));
+    }
+
+    replace(id: string, todo: Todo): State {
+        return this.newTodoListState(
+            this.todos.set(
+                this.getTodoIndex(this.getTodo(id)),
+                todo
+            ));
+    }
+    getTodo(id: String): Todo {
+        return this.todos.filter(t => t.id === id).first();
     }
 
     complete(todo: Todo): State {
@@ -64,7 +91,7 @@ export class State {
         return this.newTodoListState(
             this.todos.set(
                 this.getTodoIndex(todo),
-                new Todo(todo.text, todo.id, state)))
+                todo.withToggle(state)));
     }
 
     private getTodoIndex(todo: Todo) {
@@ -203,6 +230,9 @@ export function model(state$: Stream<State>, idSupplier: () => string, actions$:
     return state$
         .map(initState => reducers$.fold((todos, reducer) => reducer(todos), initState))
         .flatten()
-        .map(x => {console.log("list state update"); return x;})
+        .map(x => {
+            console.log("list state update");
+            return x;
+        })
         .remember();
 }

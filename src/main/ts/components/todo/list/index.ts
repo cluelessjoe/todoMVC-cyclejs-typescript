@@ -6,9 +6,10 @@ import xs, {Stream} from "xstream";
 import {VNode} from "snabbdom/vnode";
 
 import TodoListItem, {Sinks as ItemSinks} from "./item/index";
-import {model, State} from "./model";
+import {model, State, Todo} from "./model";
 import {view} from "./view";
 import {Action, intent} from "./intent";
+import {Lens} from "cycle-onionify";
 
 export const NEW_TODO_CLASS = '.new-todo';
 export const TOGGLE_ALL = 'toggle-all';
@@ -29,7 +30,6 @@ export type Sinks = {
     state$: Stream<State>
 };
 
-
 export class Route {
     constructor(readonly label: string, readonly hash: string) {
     }
@@ -40,6 +40,18 @@ export const ROUTE_ACTIVE = new Route('Active', '#/active');
 export const ROUTE_COMPLETED = new Route('Completed', '#/completed');
 export const ROUTE_DEFAULT = ROUTE_ALL;
 
+function lens(id: string): Lens<State, Todo> {
+    return {
+        get: state => state.getTodo(id),
+        set: (state, todo) => {
+            if (todo == null) {
+                return state.drop(state.getTodo(id));
+            } else {
+                return state.replace(id, todo);
+            }
+        }
+    };
+};
 export function TodoList(sources: Sources): Sinks {
     const intentProxy$ = xs.create<Action>();
 
@@ -47,29 +59,32 @@ export function TodoList(sources: Sources): Sinks {
 
     const state$ = model(sources.initialState$, sources.idSupplier, intentProxy$);
 
-    const compos$: Stream<List<ItemSinks>> = state$
+    const itemSinks: Stream<List<ItemSinks>> = state$
         .map(state => state.displayed)
         .map(todos => todos
-            .map((todo, index) => isolate(TodoListItem, todo.id)({// FIXME : if can remove this todo.id, we could get rid of uuid (simpler example)
+            .map((todo, index) => isolate(TodoListItem, {
+                onion: lens(todo.id)
+            })({
                 DOM: sources.DOM,
-                props$: xs.of({
+                onion: xs.of({
                     'todo': todo
                 })
             })).toList());
-
-    const actionsFromSinks = compos$
+/*
+    const actionsFromSinks = itemSinks
         .map(todoItemsSinks => xs.merge(...todoItemsSinks.map(sink => sink.actions$).toArray()))
         .flatten();
 
     const allActions$ = xs.merge(intent$, actionsFromSinks);
-
-    intentProxy$.imitate(allActions$);
-
-    const todoItemSinks$: Stream<VNode[]> = compos$
+  */
+    const todoItemSinks$: Stream<VNode[]> = itemSinks
         .map(todoItemsSinks => xs.combine(...todoItemsSinks.map(sink => sink.DOM).toArray()))
         .flatten();
 
-    let vdom$: Stream<VNode> = view(state$, todoItemSinks$.map(x => {console.log("item sink update");return x;}));
+    let vdom$: Stream<VNode> = view(state$, todoItemSinks$.map(x => {
+        console.log("item sink update");
+        return x;
+    }));
 
     return {
         DOM: vdom$,

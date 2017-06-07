@@ -1,36 +1,31 @@
 import {Stream} from 'xstream';
 import {DOMSource, VNode} from '@cycle/dom';
+import {StateSource} from "cycle-onionify";
 
-import {Todo} from '../model';
-import {Action} from '../intent';
-import {intents} from './intent';
+import {intent} from './intent';
 import {model} from './model';
 import {view} from './view';
+import {Todo} from "../model";
 
-
-export type TodoListItemProps = {
-    todo: Todo
-}
+export type Reducer = (prev: Todo) => Todo | undefined ;
 
 export type Sources = {
     DOM: DOMSource,
-    props$: Stream<TodoListItemProps>,
+    onion: StateSource<Todo>
 };
 export type Sinks = {
     DOM: Stream<VNode>,
-    actions$: Stream<Action>
+    onion: Stream<Reducer>;
 };
 
 function TodoListItem(sources: Sources): Sinks {
-    const intent$ = intents(sources);
-
-    const state$ = model(intent$);
-
-    const vdom$ = view(state$, sources.props$);
+    const intents = intent(sources);
+    const reducer$ = model(intents);
+    const vdom$ = view(sources.onion.state$);
 
     return {
         DOM: vdom$,
-        actions$: intent$
+        onion: reducer$
     };
 }
 
