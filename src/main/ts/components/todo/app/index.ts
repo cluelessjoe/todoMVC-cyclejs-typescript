@@ -1,29 +1,34 @@
 import {Sinks} from "@cycle/run";
 import {List} from "immutable";
-import {Stream} from "xstream";
+import xs, {Stream} from "xstream";
 
 import {TodoList} from "../list/index";
 import {State, Todo} from "../list/model";
 import * as uuid from "uuid";
+import {Reducer} from "cycle-onionify";
+import isolate from "@cycle/isolate";
 
 export const STORAGE_KEY = 'todos-cyclejs';
 
 export function TodoApp(sources): Sinks {
-    const sinks = TodoList({
+    const childSources = {
         DOM: sources.DOM,
         History: sources.History,
-        initialState$: readStateFromStorage(sources.storage),
+        onion: sources.onion,
         idSupplier: () => uuid.v4()
-    });
+    };
+
+    const sinks = isolate(TodoList)(childSources);
 
     return {
         DOM: sinks.DOM,
         History: sinks.History,
-        storage: writeStateIntoStorage(sinks.state$)
+        onion: xs.of(readStateFromStorage),
+        storage: writeStateIntoStorage(sinks.onion.state$)
     }
 }
 
-export function readStateFromStorage(storage): Stream<State> {
+export function readStateFromStorage(storage): Stream<Reducer<State>> {
     return storage
         .local
         .getItem(STORAGE_KEY)

@@ -9,6 +9,7 @@ import TodoListItem, {Sinks as ItemSinks} from "./item/index";
 import {model, State} from "./model";
 import {view} from "./view";
 import {Action, intent} from "./intent";
+import {Reducer} from "cycle-onionify";
 
 export const NEW_TODO_CLASS = '.new-todo';
 export const TOGGLE_ALL = 'toggle-all';
@@ -19,14 +20,14 @@ export const CLEAR_COMPLETED_CLASS = '.clear-completed';
 export type Sources = {
     DOM: DOMSource,
     History: any,
-    initialState$: Stream<State>,
+    storage: any,
     idSupplier: () => string
 };
 
 export type Sinks = {
     DOM: Stream<VNode>,
     History: Stream<HistoryInput | GenericInput | string>,
-    state$: Stream<State>
+    onion: Stream<Reducer<State>>
 };
 
 

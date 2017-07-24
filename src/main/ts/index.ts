@@ -4,8 +4,9 @@ import storageDriver from '@cycle/storage';
 import {run} from '@cycle/run';
 
 import {TodoApp} from './components/todo/app/index';
+import onionify from "cycle-onionify";
 
-const main = TodoApp;
+const main = onionify(TodoApp);
 
 run(main, {
     DOM: makeDOMDriver('.todoapp'),
